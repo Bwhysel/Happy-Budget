@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Budget® for Your Best Life</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Create Your Happy Budget<sup>®</sup> 😁</h1>
+  <p>A Happy Budget is a compassionate and sustainable plan for spending and saving that respects your humanity and promotes happiness.</p>
+  <p>🔐 Your budget stays private! Nothing is saved or sent unless you choose to share it.</p>
+
+  <div id="step1" class="step active">
+    <h2>1. Set Your Savings Goals</h2>
+    <p>💡 Tap one or more savings goals that are important to you. These can help guide your spending and motivate you to save.</p>
+    <div id="savingsGoalsList"></div>
+    <button id="continueButtonSavings" disabled>Continue 👍</button>
+  </div>
+
+  <div id="step2" class="step">
+    <h2>2. Enter Your Income, Values, and Allocations</h2>
+    <div class="expense-row">
+      <label for="takeHomePayInput">Enter your monthly take-home pay (after taxes):</label>
+      <input type="number" id="takeHomePayInput" class="untouched" placeholder="e.g. 8000" min="0" step="10">
+    </div>
+    <div id="expenseGrid"></div>
+    <div id="progressBars" style="display:none; flex-direction:column; gap:1em; margin-top:2em;">
+      <div style="display:flex; gap:2em; align-items:center;">
+        <div style="flex:1;">
+          <label>Budget Progress</label>
+          <span id="remainingLabel"></span>
+          <progress id="budgetProgress" value="0" max="100" style="width:100%;"></progress>
+        </div>        <div style="flex:1;">
+          <label>Categories Completed (<span id="categoryLabel">0</span>/13)</label>
+          <progress id="categoryProgress" value="0" max="13" style="width:100%;"></progress>
+        </div>
+      </div>
+      <div style="text-align:center; display:flex; justify-content:center; gap:1em;">
+        <button id="backTo1">← Back</button>
+        <button id="continueTo2_5" disabled>Continue 👍</button>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

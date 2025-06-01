@@ -1,0 +1,59 @@
+
+    body { font-family: 'Roboto', Arial, sans-serif; padding: 1em; max-width: 700px; margin: auto; line-height: 1.5; }
+    .step { display: none; }
+    .step.active { display: block; }
+    .chip { display: inline-block; padding: 6px 12px; margin: 4px; border: 1px solid #aaa; border-radius: 16px; cursor: pointer; }
+    .chip.active { background-color: #e0f7fa; font-weight: bold; }    .expense-row { 
+      margin-bottom: 1em; 
+      display: flex; 
+      gap: 1em; 
+      align-items: center; 
+    }
+    .expense-row label { 
+      min-width: 160px; 
+      flex: 2; 
+    }
+    .input-group { 
+      flex: 3;
+      display: flex;
+      gap: 1em;
+    }
+    .expense-row select, .expense-row input { 
+      flex: 1; 
+      min-width: 120px; 
+      padding: 0.3em; 
+    }
+    .expense-row input.untouched, .expense-row select.untouched { background-color: #fff9c4; }
+    .expense-row input.filled, .expense-row select.filled { background-color: #c8e6c9; }
+    /* take-home pay input coloring */
+    #takeHomePayInput.untouched { background-color: #fff9c4; }
+    #takeHomePayInput.filled { background-color: #c8e6c9; }
+    button { background-color: #2196f3; color: white; border: none; padding: 0.6em 1.2em; margin-top: 1em; font-size: 1em; border-radius: 5px; cursor: pointer; }
+    #continueButtonSavings:disabled { background-color: #90caf9; cursor: not-allowed; }
+    #continueTo2_5:disabled { background-color: #90caf9; cursor: not-allowed; }
+    progress.negative::-webkit-progress-bar { background-color: #f44336; }
+    .overspent-label { color: #e91e63; }
+    .input-group {
+      display: flex;
+      gap: 1em;
+      align-items: center;
+      width: 100%;
+    }
+
+    .input-group select,
+    .input-group input {
+      flex: 1;
+      min-width: 0;
+    }
+
+    @media (max-width: 600px) {
+      .expense-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5em;
+      }
+
+      .expense-row label {
+        width: 100%;
+      }
+    }
