@@ -7,41 +7,86 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Create Your Happy Budget<sup>®</sup> 😁</h1>
-  <p>A Happy Budget is a compassionate and sustainable plan for spending and saving that respects your humanity and promotes happiness.</p>
-  <p>🔐 Your budget stays private! Nothing is saved or sent unless you choose to share it.</p>
+    <main>
+    <h1>Create Your Happy Budget<sup>®</sup> 😁</h1>
+    <p>A Happy Budget is a compassionate and sustainable plan for spending and saving that respects your humanity and promotes happiness.</p>
+    <p>🔐 Your budget stays private! Nothing is saved or sent unless you choose to share it.</p>
 
-  <div id="step1" class="step active">
-    <h2>1. Set Your Savings Goals</h2>
-    <p>💡 Tap one or more savings goals that are important to you. These can help guide your spending and motivate you to save.</p>
-    <div id="savingsGoalsList"></div>
-    <button id="continueButtonSavings" disabled>Continue 👍</button>
-  </div>
-
-  <div id="step2" class="step">
-    <h2>2. Enter Your Income, Values, and Allocations</h2>
-    <div class="expense-row">
-      <label for="takeHomePayInput">Enter your monthly take-home pay (after taxes):</label>
-      <input type="number" id="takeHomePayInput" class="untouched" placeholder="e.g. 8000" min="0" step="10">
+    <div id="step1" class="step active">
+      <h2>1. Set Your Savings Goals</h2>
+      <p>💡 Tap one or more savings goals that are important to you. These can help guide your spending and motivate you to save.</p>
+      <div id="savingsGoalsList"></div>
+      <button id="continueButtonSavings" disabled>Continue 👍</button>
     </div>
-    <div id="expenseGrid"></div>
-    <div id="progressBars" style="display:none; flex-direction:column; gap:1em; margin-top:2em;">
-      <div style="display:flex; gap:2em; align-items:center;">
-        <div style="flex:1;">
-          <label>Budget Progress</label>
-          <span id="remainingLabel"></span>
-          <progress id="budgetProgress" value="0" max="100" style="width:100%;"></progress>
-        </div>        <div style="flex:1;">
-          <label>Categories Completed (<span id="categoryLabel">0</span>/13)</label>
-          <progress id="categoryProgress" value="0" max="13" style="width:100%;"></progress>
+
+    <div id="step2" class="step">
+      <h2>2. Enter Your Income, Values, and Allocations</h2>
+      <div class="expense-row">
+        <label for="takeHomePayInput">Enter your monthly take-home pay (after taxes):</label>
+        <input type="number" id="takeHomePayInput" class="untouched" placeholder="e.g. 8000" min="0" step="10">
+      </div>
+      <div id="expenseGrid"></div>
+      <div id="progressBars">
+        <div class="progress-row">
+          <div class="progress-section">
+            <label>Budget Progress</label>
+            <span id="remainingLabel"></span>
+            <progress id="budgetProgress" value="0" max="100"></progress>
+          </div>
+          <div class="progress-section">
+            <label>Categories Completed (<span id="categoryLabel">0</span>/13)</label>
+            <progress id="categoryProgress" value="0" max="13"></progress>
+          </div>
+        </div>
+        <div class="nav-buttons">
+          <button id="backTo1">← Back</button>
+          <button id="continueTo2_5" disabled>Continue 👍</button>
         </div>
       </div>
-      <div style="text-align:center; display:flex; justify-content:center; gap:1em;">
-        <button id="backTo1">← Back</button>
-        <button id="continueTo2_5" disabled>Continue 👍</button>
+    </div>
+    <div id="step3" class="step">
+      <h2>3: Reflect & Adjust</h2>
+      <p>🧘 This is a space to reflect. No judgment—just awareness. You've made thoughtful choices—now take a moment to notice what they mean.</p>
+
+      <section id="valueChart">
+        <h3>📊 Spending by Personal Value</h3>
+        <!-- Bars will be inserted here by JS -->
+      </section>
+
+      <section id="feedbackSection">
+        <h3>🧭 Are Your Values Reflected?</h3>
+        <p id="zeroValueFeedback">Loading...</p>
+
+        <h3>💰 Saving for What Matters</h3>
+        <p id="savingsFeedback">Loading...</p>
+
+        <h3>🏠 Housing Costs</h3>
+        <p id="housingFeedback">Loading...</p>
+      </section>
+
+      <section id="satisfactionCheck">
+        <h3>🌈 How Does This Plan Feel?</h3>
+        <div class="emoji-rating">
+          <span>😟</span>
+          <span>😐</span>
+          <span>🙂</span>
+          <span>😊</span>
+          <span>😄</span>
+        </div>
+        <p id="emojiHint" class="hint-text"></p>
+      </section>
+
+      <section id="reflectionBox">
+        <h3>✍️ Quick Reflection</h3>
+        <textarea placeholder="Does this budget reflect what matters most to you?" rows="3"></textarea>
+      </section>
+
+      <div class="nav-buttons">
+        <button id="backTo2From3">← Back to Step 2</button>
+        <button id="continueTo4" disabled>Continue to Step 4 →</button>
       </div>
     </div>
-  </div>
-  <script src="script.js"></script>
+    <script src="script.js"></script>
+    </main>
 </body>
 </html>

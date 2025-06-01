@@ -27,10 +27,14 @@ document.addEventListener('DOMContentLoaded', () => {
       getTotal() { 
         return Object.values(this.allocations).reduce((sum,val)=>sum+(parseFloat(val)||0),0); 
       }
-    },
-    goToStep(n) { 
+    },    goToStep(n) { 
       document.querySelectorAll('.step').forEach(s=>s.classList.remove('active')); 
-      document.getElementById(`step${n}`).classList.add('active'); 
+      const nextStep = document.getElementById(`step${n}`);
+      nextStep.classList.add('active');
+      if (n === 3) {
+        renderValueChart();
+        renderFeedback();
+      }
     }
   };
 
@@ -187,7 +191,7 @@ function tryNext(input, select, name) {
     if (!isNaN(pay) && pay >= 0) {
       budgetApp.takeHomePay = pay;
       currentRow = 0;
-      document.getElementById('progressBars').style.display = 'flex';
+      document.getElementById('progressBars').classList.add('visible');
       renderRow(currentRow);
       const firstRow = document.querySelector('#expenseGrid .expense-row');
       if (firstRow) {
@@ -215,4 +219,132 @@ function tryNext(input, select, name) {
   });
 
   renderSavingsGoals();
+
+    // --- Step 3 Logic ---  // Step 3 rendering functions
+
+  function renderValueChart() {
+    const chart = document.getElementById('valueChart');
+    chart.innerHTML = '';
+    const values = {};
+
+    const rows = document.querySelectorAll('#expenseGrid .expense-row');
+    rows.forEach(row => {
+      const val = row.querySelector('select')?.value;
+      const amt = parseFloat(row.querySelector('input')?.value || 0);
+      if (val && amt) {
+        values[val] = (values[val] || 0) + amt;
+      }
+    });
+
+    const total = Object.values(values).reduce((a,b) => a + b, 0);    Object.entries(values).forEach(([label, amount]) => {      const pct = Math.round((amount / total) * 100);
+      const bar = document.createElement('div');
+      const barContainer = document.createElement('div');
+      barContainer.className = 'value-bar-container';
+      
+      // Create the value bar
+      const valueBar = document.createElement('div');
+      valueBar.className = 'value-bar';
+      valueBar.style.width = `${pct}%`;
+      valueBar.textContent = `$${amount.toLocaleString()}`;
+      barContainer.appendChild(valueBar);
+      
+      // Create expandable details section
+      const details = document.createElement('div');
+      details.className = 'value-details';
+      
+      // Get all expenses for this value
+      let valueDetails = [];
+      let totalForValue = 0;
+      document.querySelectorAll('#expenseGrid .expense-row').forEach(row => {
+        if (row.querySelector('select')?.value === label) {
+          const category = row.dataset.category;
+          const amount = parseFloat(row.querySelector('input')?.value || 0);
+          if (amount > 0) {
+            valueDetails.push({ category, amount });
+            totalForValue += amount;
+          }
+        }
+      });
+      
+      // Add expense details
+      valueDetails.forEach(({ category, amount }) => {
+        const item = document.createElement('div');
+        item.className = 'value-details-item';
+        item.innerHTML = `
+          <span>${category}</span>
+          <span>$${amount.toLocaleString()}</span>
+        `;
+        details.appendChild(item);
+      });
+      
+      // Add total
+      const totalItem = document.createElement('div');
+      totalItem.className = 'value-details-item';
+      totalItem.innerHTML = `
+        <span>Total for ${label}</span>
+        <span>$${totalForValue.toLocaleString()}</span>
+      `;
+      details.appendChild(totalItem);
+      
+      bar.innerHTML = `<strong>${label}</strong>`;
+      bar.appendChild(barContainer);
+      bar.appendChild(details);
+      
+      barContainer.addEventListener('click', () => {
+        // Toggle details visibility
+        const wasVisible = details.classList.contains('visible');
+        document.querySelectorAll('.value-details').forEach(d => d.classList.remove('visible'));
+        if (!wasVisible) {
+          details.classList.add('visible');
+        }
+      });
+      
+      chart.appendChild(bar);
+    });
+  }
+
+  function renderFeedback() {
+    const savings = budgetApp.expenseState.allocations['Savings & Debt Reduction'] || 0;
+    const housing = budgetApp.expenseState.allocations['Housing'] || 0;
+    const takeHome = budgetApp.takeHomePay;
+
+    const savingsPct = (savings / takeHome) * 100;
+    const savingsGoals = budgetApp.selectedGoals.join(', ') || 'your goals';
+    document.getElementById('savingsFeedback').textContent =
+      savingsPct < 10
+        ? `⚠️ You are saving just ${Math.round(savingsPct)}% of your take-home pay. Your savings goals include ${savingsGoals}. Consider going back to adjust.`
+        : `💡 Good job saving ${Math.round(savingsPct)}% of your take-home pay. Your savings goals include ${savingsGoals}.`;
+
+    const housingPct = (housing / takeHome) * 100;
+    document.getElementById('housingFeedback').textContent =
+      housingPct > 35
+        ? `⚠️ Housing takes up ${Math.round(housingPct)}% of your income. Consider adjusting income or housing costs.`
+        : `💡 Housing is ${Math.round(housingPct)}% of income. That looks reasonable.`;
+
+    const used = new Set();
+    document.querySelectorAll('#expenseGrid .expense-row').forEach(row => {
+      const val = row.querySelector('select')?.value;
+      const amt = parseFloat(row.querySelector('input')?.value || 0);
+      if (val && amt > 0) used.add(val);
+    });
+    const all = [
+      'Autonomy','Basic Needs','Empowerment','Financial Security','Fun & Leisure',
+      'Giving & Helping Others','Health','Learning','None','Respect','Social Connectedness'
+    ];
+    const unused = all.filter(v => !used.has(v));
+    document.getElementById('zeroValueFeedback').textContent = unused.length
+      ? `💡 You didn’t allocate anything to: ${unused.join(', ')}.`
+      : `✅ You allocated something to every value.`;
+  }
+  document.querySelectorAll('#satisfactionCheck .emoji-rating span').forEach((span, idx) => {
+    span.addEventListener('click', () => {
+      const hint = document.getElementById('emojiHint');
+      hint.textContent = idx < 3 ? '🔄 Consider going back to make a happier plan.' : '😊 Great! Your plan feels good to you.';
+      document.getElementById('continueTo4').disabled = false;
+    });
+  });
+
+  document.getElementById('continueTo2_5').addEventListener('click', () => budgetApp.goToStep(3));
+  document.getElementById('backTo2From3').addEventListener('click', () => budgetApp.goToStep(2));
+
 });

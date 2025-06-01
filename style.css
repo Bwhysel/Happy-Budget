@@ -1,7 +1,4 @@
-
-    body { font-family: 'Roboto', Arial, sans-serif; padding: 1em; max-width: 700px; margin: auto; line-height: 1.5; }
-    .step { display: none; }
-    .step.active { display: block; }
+body { font-family: 'Roboto', Arial, sans-serif; padding: 1em; max-width: 700px; margin: auto; line-height: 1.5; }
     .chip { display: inline-block; padding: 6px 12px; margin: 4px; border: 1px solid #aaa; border-radius: 16px; cursor: pointer; }
     .chip.active { background-color: #e0f7fa; font-weight: bold; }    .expense-row { 
       margin-bottom: 1em; 
@@ -33,18 +30,7 @@
     #continueTo2_5:disabled { background-color: #90caf9; cursor: not-allowed; }
     progress.negative::-webkit-progress-bar { background-color: #f44336; }
     .overspent-label { color: #e91e63; }
-    .input-group {
-      display: flex;
-      gap: 1em;
-      align-items: center;
-      width: 100%;
-    }
-
-    .input-group select,
-    .input-group input {
-      flex: 1;
-      min-width: 0;
-    }
+    /* Input group styles moved to unified definition */
 
     @media (max-width: 600px) {
       .expense-row {
@@ -57,3 +43,221 @@
         width: 100%;
       }
     }
+    #valueChart {
+  margin-top: 2em;
+}
+
+#valueChart div {
+  font-size: 0.9em;
+  margin-bottom: 1em;
+}
+
+#valueChart strong {
+  display: block;
+  margin-bottom: 0.5em;
+  font-weight: bold;
+}
+
+.value-bar-container {
+  background: #ddd;
+  border-radius: 4px;
+  margin: 0.25em 0;
+  cursor: pointer;
+}
+
+.value-bar {
+  background: #4caf50;
+  color: white;
+  padding: 0.5em;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  min-width: 2em;
+  box-sizing: border-box;
+}
+
+.value-details {
+  display: none;
+  background: #f5f5f5;
+  margin-top: 0.5em;
+  padding: 1em;
+  border-radius: 4px;
+  font-size: 1.4em;
+}
+
+.value-details.visible {
+  display: block;
+}
+
+.value-details-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5em;
+  border-bottom: 1px solid #eee;
+  gap: 1em;
+}
+
+.value-details-item:last-child {
+  border-bottom: none;
+  font-weight: bold;
+  font-size: 1.25em;
+  margin-top: 0.75em;
+  background: #e8f5e9;
+  border-radius: 8px;
+  padding: 1em;
+}
+
+@media (max-width: 600px) {
+  .value-details {
+    padding: 1em;
+    font-size: 1.1em;
+  }
+  
+  .value-details-item {
+    flex-direction: column;
+    text-align: left;
+    padding: 1em 0.5em;
+  }
+  
+  .value-details-item span:first-child {
+    color: #666;
+    margin-bottom: 0.3em;
+  }
+  
+  .value-details-item span:last-child {
+    font-size: 1.2em;
+    font-weight: 500;
+  }
+  
+  .value-details-item:last-child {
+    flex-direction: row;
+    align-items: center;
+    padding: 1em;
+    margin: 0.5em -0.5em 0;
+  }
+}
+
+#feedbackSection {
+  margin-top: 2em;
+  font-size: 0.95em;
+}
+
+#feedbackSection h3 {
+  margin-bottom: 0.25em;
+  margin-top: 1.5em;
+  font-weight: bold;
+}
+
+#satisfactionCheck {
+  margin-top: 2em;
+  text-align: center;
+}
+
+.emoji-rating {
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+  margin: 0.5em 0;
+}
+
+.emoji-rating span {
+  cursor: pointer;
+}
+
+.emoji-rating span:hover {
+  transform: scale(1.2);
+}
+
+.hint-text {
+  font-style: italic;
+  font-size: 0.9em;
+  color: #444;
+}
+
+/* Progress Bars Container */
+#progressBars {
+  display: none;
+  flex-direction: column;
+  gap: 1em;
+  margin-top: 2em;
+}
+
+#progressBars.visible {
+  display: flex;
+}
+
+.progress-row {
+  display: flex;
+  gap: 2em;
+  align-items: center;
+}
+
+.progress-section {
+  flex: 1;
+}
+
+progress {
+  width: 100%;
+}
+
+.nav-buttons {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+}
+
+/* Step Visibility */
+.step {
+  display: none;
+}
+
+.step.active {
+  display: block;
+}
+
+/* Step 3 Styles */
+#reflectionBox textarea {
+  width: 100%;
+  padding: 0.5em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+  min-height: 100px;
+}
+#valueChart {
+  font-size: 1.1em;
+}
+
+.value-bar {
+  font-size: 1em;
+  font-weight: bold;
+}
+
+.value-bar-container {
+  font-size: 1em;
+}
+.value-detail {
+  font-size: 1em;
+  line-height: 1.5;
+}
+
+.value-detail td {
+  padding: 0.5em 0.75em;
+  font-size: 1em;
+}
+#valueChart table {
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+#valueChart table td,
+#valueChart table th {
+  padding: 0.5em 0.75em;
+}
+#valueChart .value-details,
+#valueChart .value-details * {
+  font-size: 1rem !important;
+  line-height: 1.4;
+}
+
