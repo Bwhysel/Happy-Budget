@@ -98,20 +98,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function tryNext(input, select, name) {
-    if (input.value.trim() !== '') {
-      budgetApp.expenseState.allocations[name] = parseFloat(input.value) || 0;
-      input.classList.add('filled');
-      if (select.value !== '') select.classList.add('filled');
-      updateProgress();
+function tryNext(input, select, name) {
+  if (input.value.trim() !== '' && select.value !== '') {
+    budgetApp.expenseState.allocations[name] = parseFloat(input.value) || 0;
+    input.classList.add('filled');
+    select.classList.add('filled');
+    updateProgress();
 
-      if (currentRow < categories.length - 1) {
-        currentRow++;
-        renderRow(currentRow);
-        document.querySelectorAll('#expenseGrid .expense-row')[currentRow]?.querySelector('select')?.focus();
-      }
+    if (currentRow < categories.length - 1) {
+      currentRow++;
+      renderRow(currentRow);
+      document.querySelectorAll('#expenseGrid .expense-row')[currentRow]?.querySelector('select')?.focus();
     }
   }
+}
 
   function renderRow(idx) {
     const { name, emoji, defaultPct } = categories[idx];
