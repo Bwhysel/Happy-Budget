@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     selectedGoals: [], 
     takeHomePay: 0, 
     otherInput: null,
+    happinessLevel: null, // 0-4 representing the selected emoji
     expenseState: { 
       allocations: {},
       getTotal() { 
@@ -34,6 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (n === 3) {
         renderValueChart();
         renderFeedback();
+      } else if (n === 4) {
+        renderStep4Summary();
       }
     }
   };
@@ -312,8 +315,8 @@ function tryNext(input, select, name) {
     const savingsGoals = budgetApp.selectedGoals.join(', ') || 'your goals';
     document.getElementById('savingsFeedback').textContent =
       savingsPct < 10
-        ? `⚠️ You are saving just ${Math.round(savingsPct)}% of your take-home pay. Your savings goals include ${savingsGoals}. Consider going back to adjust.`
-        : `💡 Good job saving ${Math.round(savingsPct)}% of your take-home pay. Your savings goals include ${savingsGoals}.`;
+      ? `🌱 You're saving ${Math.round(savingsPct)}% of your take-home pay. Your savings goals include ${savingsGoals}. Would you like to revisit your budget to save a bit more and reach your goals sooner?`
+      : `🎉 Great job saving ${Math.round(savingsPct)}% of your take-home pay! Your savings goals include ${savingsGoals}. Would you still like to revisit your budget to save a bit more and reach your goals sooner?`;
 
     const housingPct = (housing / takeHome) * 100;
     document.getElementById('housingFeedback').textContent =
@@ -335,16 +338,216 @@ function tryNext(input, select, name) {
     document.getElementById('zeroValueFeedback').textContent = unused.length
       ? `💡 You didn’t allocate anything to: ${unused.join(', ')}.`
       : `✅ You allocated something to every value.`;
+  }  function saveFinalData() {
+    // Get the current date for the filename
+    const now = new Date();
+    const dateStr = now.toISOString().split('T')[0];
+      const data = {
+      savedOn: now.toISOString(),
+      goals: budgetApp.selectedGoals,
+      takeHomePay: budgetApp.takeHomePay,
+      allocations: budgetApp.expenseState.allocations,
+      values: {}, // Store values for each category
+      commitment: document.getElementById("commitmentText")?.value || "",
+      happinessLevel: budgetApp.happinessLevel
+    };
+
+    try {
+      // Collect values for each category
+      document.querySelectorAll('.expense-row').forEach(row => {
+        const category = row.dataset.category;
+        const value = row.querySelector('select')?.value;
+        if (category && value) {
+          data.values[category] = value;
+        }
+      });
+
+      const jsonString = JSON.stringify(data, null, 2);
+      const blob = new Blob([jsonString], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `happy-budget-${dateStr}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      // Show success message
+      const saveBtn = document.getElementById('saveBudgetBtn');
+      const originalText = saveBtn.textContent;
+      saveBtn.textContent = "Saved! ✅";
+      setTimeout(() => {
+        saveBtn.textContent = originalText;
+      }, 2000);
+    } catch (err) {
+      console.error('Error saving budget:', err);
+      alert('Error saving budget. Please try again.');
+    }
   }
   document.querySelectorAll('#satisfactionCheck .emoji-rating span').forEach((span, idx) => {
     span.addEventListener('click', () => {
-      const hint = document.getElementById('emojiHint');
-      hint.textContent = idx < 3 ? '🔄 Consider going back to make a happier plan.' : '😊 Great! Your plan feels good to you.';
+      // Remove active class from all emojis
+      document.querySelectorAll('#satisfactionCheck .emoji-rating span').forEach(s => 
+        s.classList.remove('active'));
+      
+      // Add active class to selected emoji
+      span.classList.add('active');
+      
+      // Store happiness level
+      budgetApp.happinessLevel = idx;
+        const hint = document.getElementById('emojiHint');
+      hint.textContent = idx < 3 ? "🔄 Consider going back to make a happier plan." : "👍🏻 Great! Your plan aligns with your happiness.";
       document.getElementById('continueTo4').disabled = false;
     });
   });
 
   document.getElementById('continueTo2_5').addEventListener('click', () => budgetApp.goToStep(3));
-  document.getElementById('backTo2From3').addEventListener('click', () => budgetApp.goToStep(2));
+  document.getElementById('backTo2From3').addEventListener('click', () => budgetApp.goToStep(2));    document.getElementById('continueTo4').addEventListener('click', () => {
+    budgetApp.goToStep(4);
+    renderStep4Summary();
+});
 
+  function renderStep4Summary() {
+    // Render savings goals
+    const goalsList = document.getElementById('selectedGoalsList');
+    goalsList.innerHTML = '';
+    budgetApp.selectedGoals.forEach(goal => {
+      const chip = document.createElement('div');
+      chip.className = 'goal-chip';
+      chip.textContent = goal;
+      goalsList.appendChild(chip);
+    });
+
+    // Render budget categories table
+    const tableBody = document.querySelector('#budgetSummaryTable tbody');
+    tableBody.innerHTML = '';
+    const totalMonthly = budgetApp.expenseState.getTotal();
+
+    categories.forEach(({ name, emoji }) => {
+      const amount = budgetApp.expenseState.allocations[name] || 0;
+      const pct = ((amount / totalMonthly) * 100).toFixed(1);
+
+      // Find associated value
+      const row = document.querySelector(`.expense-row[data-category="${name}"]`);
+      const value = row ? row.querySelector('select')?.value || 'None' : 'None';
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${emoji} ${name}</td>
+        <td>${value}</td>
+        <td>$${amount.toLocaleString()}</td>
+        <td>${pct}%</td>
+      `;
+      tableBody.appendChild(tr);
+    });
+
+    // Update total
+    document.getElementById('totalMonthlyBudget').textContent = 
+      `$${totalMonthly.toLocaleString()}`;
+  }
+
+  // Add this near the end of the DOMContentLoaded event listener
+    document.getElementById('loadBudgetInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const data = JSON.parse(e.target.result);
+        
+        // Validate the data
+        if (!data.goals || !data.takeHomePay || !data.allocations) {
+          throw new Error('Invalid budget file format');
+        }
+
+        // Load savings goals
+        budgetApp.selectedGoals = data.goals;
+        document.querySelectorAll('#savingsGoalsList .chip').forEach(chip => {
+          if (data.goals.includes(chip.textContent)) {
+            chip.classList.add('active');
+          } else {
+            chip.classList.remove('active');
+          }
+        });
+        document.getElementById('continueButtonSavings').disabled = data.goals.length === 0;
+
+        // Load take home pay
+        budgetApp.takeHomePay = data.takeHomePay;
+        const takeHomePayInput = document.getElementById('takeHomePayInput');
+        takeHomePayInput.value = data.takeHomePay;
+        takeHomePayInput.classList.add('filled');        // Load allocations and values
+        budgetApp.expenseState.allocations = data.allocations;
+        currentRow = 0;
+        document.getElementById('progressBars').classList.add('visible');
+        
+        // Render all rows first
+        categories.forEach((_, idx) => {
+          renderRow(idx);
+        });
+        
+        // Now populate all rows with saved data
+        categories.forEach((cat, idx) => {
+          const row = document.querySelectorAll('#expenseGrid .expense-row')[idx];
+          if (row) {
+            const select = row.querySelector('select');
+            const input = row.querySelector('input');
+            const value = data.values?.[cat.name];
+            const amount = data.allocations[cat.name];
+            
+            if (select && value) {
+              select.classList.remove('untouched');
+              select.value = value;
+              select.classList.add('filled');
+            }
+            
+            if (input && amount) {
+              input.classList.remove('untouched');
+              input.value = amount;
+              input.classList.add('filled');
+            }
+          }
+        });
+
+        // Update all progress
+        updateProgress();        // If commitment exists, prepare it
+        if (data.commitment) {
+          const commitmentText = document.getElementById('commitmentText');
+          if (commitmentText) {
+            commitmentText.value = data.commitment;
+          }
+        }
+
+        // Restore happiness level if it exists
+        if (typeof data.happinessLevel === 'number') {
+          budgetApp.happinessLevel = data.happinessLevel;
+          const emojis = document.querySelectorAll('#satisfactionCheck .emoji-rating span');
+          emojis.forEach(s => s.classList.remove('active'));
+          if (emojis[data.happinessLevel]) {
+            emojis[data.happinessLevel].classList.add('active');
+          }
+          document.getElementById('continueTo4').disabled = false;
+        }
+
+        // Show success message
+        alert('Budget loaded successfully! 📊');
+
+      } catch (err) {
+        console.error('Error loading budget:', err);
+        alert('Error loading budget file. Please make sure you selected a valid Happy Budget file.');
+      }
+    };
+    reader.readAsText(file);
+  });
+  // Add print, save, and load button event listeners
+  document.getElementById('printBudgetBtn')?.addEventListener('click', () => {
+    window.print();
+  });
+
+  document.getElementById('saveBudgetBtn')?.addEventListener('click', saveFinalData);
+
+  document.getElementById('loadBudgetBtn')?.addEventListener('click', () => {
+    document.getElementById('loadBudgetInput').click();
+  });
+
+  // End of the DOMContentLoaded event listener
 });

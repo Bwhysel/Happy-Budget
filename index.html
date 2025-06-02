@@ -10,13 +10,14 @@
     <main>
     <h1>Create Your Happy Budget<sup>®</sup> 😁</h1>
     <p>A Happy Budget is a compassionate and sustainable plan for spending and saving that respects your humanity and promotes happiness.</p>
-    <p>🔐 Your budget stays private! Nothing is saved or sent unless you choose to share it.</p>
-
-    <div id="step1" class="step active">
+    <p>🔐 Your budget stays private! Nothing is saved or sent unless you choose to share it.</p>    <div id="step1" class="step active">
       <h2>1. Set Your Savings Goals</h2>
       <p>💡 Tap one or more savings goals that are important to you. These can help guide your spending and motivate you to save.</p>
-      <div id="savingsGoalsList"></div>
-      <button id="continueButtonSavings" disabled>Continue 👍</button>
+      <div id="savingsGoalsList"></div>      <div class="nav-buttons">
+        <button id="loadBudgetBtn" class="secondary">Load Saved Budget 📂</button>
+        <button id="continueButtonSavings" disabled>Continue 👍</button>
+      </div>
+      <input type="file" id="loadBudgetInput" accept=".json" style="display: none;">
     </div>
 
     <div id="step2" class="step">
@@ -65,27 +66,63 @@
       </section>
 
       <section id="satisfactionCheck">
-        <h3>🌈 How Does This Plan Feel?</h3>
-        <div class="emoji-rating">
+        <h3>🌈 How Does This Plan Feel?</h3>        <div class="emoji-rating">
           <span>😟</span>
           <span>😐</span>
           <span>🙂</span>
           <span>😊</span>
           <span>😄</span>
         </div>
-        <p id="emojiHint" class="hint-text"></p>
-      </section>
-
-      <section id="reflectionBox">
-        <h3>✍️ Quick Reflection</h3>
-        <textarea placeholder="Does this budget reflect what matters most to you?" rows="3"></textarea>
-      </section>
-
-      <div class="nav-buttons">
+        <p id="emojiHint"></p>
+      </section><div class="nav-buttons">
         <button id="backTo2From3">← Back to Step 2</button>
         <button id="continueTo4" disabled>Continue to Step 4 →</button>
       </div>
+    </div>    <div id="step4" class="step">
+      <h2>4. Commit to Your Happy Budget</h2>
+      <p>👏 Congratulations! You're almost done! Here's your budget summary and next steps.</p>
+
+      <div id="budgetSummary">
+        <section id="savingsGoalsSummary">
+          <h3>💫 Your Savings Goals</h3>
+          <div id="selectedGoalsList"></div>
+        </section>
+
+        <section id="categoryTableSummary">
+          <h3>📊 Budget Categories</h3>
+          <div class="table-wrapper">
+            <table id="budgetSummaryTable">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Value</th>
+                  <th>Amount</th>
+                  <th>%</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="2"><strong>Total Monthly Budget</strong></td>
+                  <td id="totalMonthlyBudget"></td>
+                  <td>100%</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </section>
+
+        <section id="commitmentSection">
+          <h3>✍️ Your Commitment</h3>
+          <p>Take a moment to commit to your next steps:</p>
+          <textarea id="commitmentText" placeholder="I will... (e.g., automate savings, reduce spending on X, share my plan with Y)" rows="4"></textarea>
+        </section>
+      </div>      <div class="nav-buttons">
+        <button id="printBudgetBtn">Print Your Budget 🖨️</button>
+        <button id="saveBudgetBtn">Save My Budget 💾</button>
+      </div>
     </div>
+
     <script src="script.js"></script>
     </main>
 </body>
