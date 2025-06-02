@@ -315,13 +315,13 @@ function tryNext(input, select, name) {
     const savingsGoals = budgetApp.selectedGoals.join(', ') || 'your goals';
     document.getElementById('savingsFeedback').textContent =
       savingsPct < 10
-      ? `🌱 You're saving ${Math.round(savingsPct)}% of your take-home pay. Your savings goals include ${savingsGoals}. Would you like to revisit your budget to save a bit more and reach your goals sooner?`
+      ? `⚠️ You're saving just ${Math.round(savingsPct)}% of your take-home pay. Your savings goals include ${savingsGoals}. Would you like to revisit your budget to save a bit more and reach your goals sooner?`
       : `🎉 Great job saving ${Math.round(savingsPct)}% of your take-home pay! Your savings goals include ${savingsGoals}. Would you still like to revisit your budget to save a bit more and reach your goals sooner?`;
 
     const housingPct = (housing / takeHome) * 100;
     document.getElementById('housingFeedback').textContent =
       housingPct > 35
-        ? `⚠️ Housing takes up ${Math.round(housingPct)}% of your income. Consider adjusting income or housing costs.`
+        ? `⚠️ Housing takes up ${Math.round(housingPct)}% of your income. Is this sustainable? Can you reduce housing costs or increase income?`
         : `💡 Housing is ${Math.round(housingPct)}% of income. That looks reasonable.`;
 
     const used = new Set();
@@ -391,11 +391,18 @@ function tryNext(input, select, name) {
       
       // Add active class to selected emoji
       span.classList.add('active');
-      
-      // Store happiness level
+        // Store happiness level
       budgetApp.happinessLevel = idx;
-        const hint = document.getElementById('emojiHint');
-      hint.textContent = idx < 3 ? "🔄 Consider going back to make a happier plan." : "👍🏻 Great! Your plan aligns with your happiness.";
+      const hint = document.getElementById('emojiHint');
+      const backButton = document.getElementById('backTo2From3');
+      
+      if (idx <= 2) {
+        hint.textContent = "🔄 Consider going back to make a happier plan.";
+        backButton.classList.add('pulse');
+      } else {
+        hint.textContent = "👍🏻 Great! Your plan aligns with your happiness.";
+        backButton.classList.remove('pulse');
+      }
       document.getElementById('continueTo4').disabled = false;
     });
   });
