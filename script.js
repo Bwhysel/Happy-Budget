@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const savingsGoals = ['🚨 Emergency Fund','💳 Debt Reduction','🏠 Down Payment','📚 Education','👩‍💼 New Business','🔧 Repairs','👵 Comfortable Old Age','✨ Other'];
+  const savingsGoals = ['🚨 Emergency Fund', '💳 Debt Reduction', '🏠 Down Payment', '📚 Education', '👩‍💼 New Business', '🔧 Repairs', '👵 Comfortable Old Age', '✨ Other'];
   const categories = [
     { name: 'Savings & Debt Reduction', emoji: '💰', defaultPct: 0.10 },
     { name: 'Housing', emoji: '🏠', defaultPct: 0.30 },
@@ -19,19 +19,30 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentRow = 0;
 
   const budgetApp = {
-    selectedGoals: [], 
-    takeHomePay: 0, 
+    selectedGoals: [],
+    takeHomePay: 0,
     otherInput: null,
-    happinessLevel: null, // 0-4 representing the selected emoji
-    expenseState: { 
+    happinessLevel: null, // 0–4 representing the selected emoji
+
+    expenseState: {
       allocations: {},
-      getTotal() { 
-        return Object.values(this.allocations).reduce((sum,val)=>sum+(parseFloat(val)||0),0); 
+      getTotal() {
+        return Object.values(this.allocations).reduce((sum, val) => sum + (parseFloat(val) || 0), 0);
       }
-    },    goToStep(n) { 
-      document.querySelectorAll('.step').forEach(s=>s.classList.remove('active')); 
+    },
+
+    goToStep(n) {
+      document.querySelectorAll('.step-indicator').forEach(dot => {
+        dot.classList.remove('active');
+      });
+
+      document.querySelector(`.step-indicator[data-step="${n}"]`)?.classList.add('active');
+
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+
       const nextStep = document.getElementById(`step${n}`);
       nextStep.classList.add('active');
+
       if (n === 3) {
         renderValueChart();
         renderFeedback();
@@ -40,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   };
+  
 
   function getRemaining() {
     return budgetApp.takeHomePay - budgetApp.expenseState.getTotal();
@@ -61,15 +73,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const remaining = getRemaining();
 
     if (budgetApp.otherInput) {
-      budgetApp.otherInput.placeholder = `e.g. ${Math.max(0,Math.round(remaining))}`;
+      budgetApp.otherInput.placeholder = `e.g. ${Math.max(0, Math.round(remaining))}`;
     }
 
     const bp = document.getElementById('budgetProgress');
     if (remaining < 0) {
       bp.classList.add('negative');
-      document.getElementById('remainingLabel').innerHTML = `<span class="overspent-label">⚠️ ($${Math.abs(Math.round(remaining)).toLocaleString()} overspent)</span>`;    } else {
+      document.getElementById('remainingLabel').innerHTML = `<span class="overspent-label">⚠️ ($${Math.abs(Math.round(remaining)).toLocaleString()} overspent)</span>`;
+    } else {
       bp.classList.remove('negative');
-      document.getElementById('remainingLabel').textContent = `($${Math.max(0,Math.round(remaining)).toLocaleString()} remaining)`;
+      document.getElementById('remainingLabel').textContent = `($${Math.max(0, Math.round(remaining)).toLocaleString()} remaining)`;
     }
 
     bp.value = Math.min(100, Math.round((totalAlloc / budgetApp.takeHomePay) * 100));
@@ -105,20 +118,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-function tryNext(input, select, name) {
-  if (input.value.trim() !== '' && select.value !== '') {
-    budgetApp.expenseState.allocations[name] = parseFloat(input.value) || 0;
-    input.classList.add('filled');
-    select.classList.add('filled');
-    updateProgress();
+  function tryNext(input, select, name) {
+    if (input.value.trim() !== '' && select.value !== '') {
+      budgetApp.expenseState.allocations[name] = parseFloat(input.value) || 0;
+      input.classList.add('filled');
+      select.classList.add('filled');
+      updateProgress();
 
-    if (currentRow < categories.length - 1) {
-      currentRow++;
-      renderRow(currentRow);
-      document.querySelectorAll('#expenseGrid .expense-row')[currentRow]?.querySelector('select')?.focus();
+      if (currentRow < categories.length - 1) {
+        currentRow++;
+        renderRow(currentRow);
+        document.querySelectorAll('#expenseGrid .expense-row')[currentRow]?.querySelector('select')?.focus();
+      }
     }
   }
-}
 
   function renderRow(idx) {
     const { name, emoji, defaultPct } = categories[idx];
@@ -134,7 +147,7 @@ function tryNext(input, select, name) {
 
     const select = document.createElement('select');
     select.innerHTML = '<option value="">Pick a value...</option>';
-    ['Autonomy','Basic Needs','Empowerment','Financial Security','Fun & Leisure','Giving & Helping Others','Health','Learning','None','Respect','Social Connectedness'].forEach(val => {
+    ['Autonomy', 'Basic Needs', 'Empowerment', 'Financial Security', 'Fun & Leisure', 'Giving & Helping Others', 'Health', 'Learning', 'None', 'Respect', 'Social Connectedness'].forEach(val => {
       const opt = document.createElement('option');
       opt.value = val;
       opt.textContent = val;
@@ -207,7 +220,7 @@ function tryNext(input, select, name) {
     }
   });
 
-  takeHomePayInput.addEventListener('keydown', function(e) {
+  takeHomePayInput.addEventListener('keydown', function (e) {
     if (e.key === 'Enter') this.blur();
   });
 
@@ -222,8 +235,9 @@ function tryNext(input, select, name) {
   });
 
   renderSavingsGoals();
+  document.querySelector('.step-indicator[data-step="1"]')?.classList.add('active');
 
-    // --- Step 3 Logic ---  // Step 3 rendering functions
+  // --- Step 3 Logic ---  // Step 3 rendering functions
 
   function renderValueChart() {
     const chart = document.getElementById('valueChart');
@@ -239,22 +253,23 @@ function tryNext(input, select, name) {
       }
     });
 
-    const total = Object.values(values).reduce((a,b) => a + b, 0);    Object.entries(values).forEach(([label, amount]) => {      const pct = Math.round((amount / total) * 100);
+    const total = Object.values(values).reduce((a, b) => a + b, 0); Object.entries(values).forEach(([label, amount]) => {
+      const pct = Math.round((amount / total) * 100);
       const bar = document.createElement('div');
       const barContainer = document.createElement('div');
       barContainer.className = 'value-bar-container';
-      
+
       // Create the value bar
       const valueBar = document.createElement('div');
       valueBar.className = 'value-bar';
       valueBar.style.width = `${pct}%`;
       valueBar.textContent = `$${amount.toLocaleString()}`;
       barContainer.appendChild(valueBar);
-      
+
       // Create expandable details section
       const details = document.createElement('div');
       details.className = 'value-details';
-      
+
       // Get all expenses for this value
       let valueDetails = [];
       let totalForValue = 0;
@@ -268,7 +283,7 @@ function tryNext(input, select, name) {
           }
         }
       });
-      
+
       // Add expense details
       valueDetails.forEach(({ category, amount }) => {
         const item = document.createElement('div');
@@ -279,7 +294,7 @@ function tryNext(input, select, name) {
         `;
         details.appendChild(item);
       });
-      
+
       // Add total
       const totalItem = document.createElement('div');
       totalItem.className = 'value-details-item';
@@ -288,11 +303,11 @@ function tryNext(input, select, name) {
         <span>$${totalForValue.toLocaleString()}</span>
       `;
       details.appendChild(totalItem);
-      
+
       bar.innerHTML = `<strong>${label}</strong>`;
       bar.appendChild(barContainer);
       bar.appendChild(details);
-      
+
       barContainer.addEventListener('click', () => {
         // Toggle details visibility
         const wasVisible = details.classList.contains('visible');
@@ -301,7 +316,7 @@ function tryNext(input, select, name) {
           details.classList.add('visible');
         }
       });
-      
+
       chart.appendChild(bar);
     });
   }
@@ -315,8 +330,8 @@ function tryNext(input, select, name) {
     const savingsGoals = budgetApp.selectedGoals.join(', ') || 'your goals';
     document.getElementById('savingsFeedback').textContent =
       savingsPct < 10
-      ? `⚠️ You're saving just ${Math.round(savingsPct)}% of your take-home pay. Your savings goals include ${savingsGoals}. Would you like to revisit your budget to save a bit more and reach your goals sooner?`
-      : `🎉 Great job saving ${Math.round(savingsPct)}% of your take-home pay! Your savings goals include ${savingsGoals}. Would you still like to revisit your budget to save a bit more and reach your goals sooner?`;
+        ? `⚠️ You're saving just ${Math.round(savingsPct)}% of your take-home pay. Your savings goals include ${savingsGoals}. Would you like to revisit your budget to save a bit more and reach your goals sooner?`
+        : `🎉 Great job saving ${Math.round(savingsPct)}% of your take-home pay! Your savings goals include ${savingsGoals}. Would you still like to revisit your budget to save a bit more and reach your goals sooner?`;
 
     const housingPct = (housing / takeHome) * 100;
     document.getElementById('housingFeedback').textContent =
@@ -331,18 +346,18 @@ function tryNext(input, select, name) {
       if (val && amt > 0) used.add(val);
     });
     const all = [
-      'Autonomy','Basic Needs','Empowerment','Financial Security','Fun & Leisure',
-      'Giving & Helping Others','Health','Learning','None','Respect','Social Connectedness'
+      'Autonomy', 'Basic Needs', 'Empowerment', 'Financial Security', 'Fun & Leisure',
+      'Giving & Helping Others', 'Health', 'Learning', 'None', 'Respect', 'Social Connectedness'
     ];
     const unused = all.filter(v => !used.has(v));
     document.getElementById('zeroValueFeedback').textContent = unused.length
       ? `💡 You didn’t allocate anything to: ${unused.join(', ')}.`
       : `✅ You allocated something to every value.`;
-  }  function saveFinalData() {
+  } function saveFinalData() {
     // Get the current date for the filename
     const now = new Date();
     const dateStr = now.toISOString().split('T')[0];
-      const data = {
+    const data = {
       savedOn: now.toISOString(),
       goals: budgetApp.selectedGoals,
       takeHomePay: budgetApp.takeHomePay,
@@ -370,7 +385,7 @@ function tryNext(input, select, name) {
       a.download = `happy-budget-${dateStr}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      
+
       // Show success message
       const saveBtn = document.getElementById('saveBudgetBtn');
       const originalText = saveBtn.textContent;
@@ -386,16 +401,16 @@ function tryNext(input, select, name) {
   document.querySelectorAll('#satisfactionCheck .emoji-rating span').forEach((span, idx) => {
     span.addEventListener('click', () => {
       // Remove active class from all emojis
-      document.querySelectorAll('#satisfactionCheck .emoji-rating span').forEach(s => 
+      document.querySelectorAll('#satisfactionCheck .emoji-rating span').forEach(s =>
         s.classList.remove('active'));
-      
+
       // Add active class to selected emoji
       span.classList.add('active');
-        // Store happiness level
+      // Store happiness level
       budgetApp.happinessLevel = idx;
       const hint = document.getElementById('emojiHint');
       const backButton = document.getElementById('backTo2From3');
-      
+
       if (idx <= 2) {
         hint.textContent = "🔄 Consider going back to make a happier plan.";
         backButton.classList.add('pulse');
@@ -408,10 +423,10 @@ function tryNext(input, select, name) {
   });
 
   document.getElementById('continueTo2_5').addEventListener('click', () => budgetApp.goToStep(3));
-  document.getElementById('backTo2From3').addEventListener('click', () => budgetApp.goToStep(2));    document.getElementById('continueTo4').addEventListener('click', () => {
+  document.getElementById('backTo2From3').addEventListener('click', () => budgetApp.goToStep(2)); document.getElementById('continueTo4').addEventListener('click', () => {
     budgetApp.goToStep(4);
     renderStep4Summary();
-});
+  });
 
   function renderStep4Summary() {
     // Render savings goals
@@ -422,6 +437,12 @@ function tryNext(input, select, name) {
       chip.className = 'goal-chip';
       chip.textContent = goal;
       goalsList.appendChild(chip);
+      const emojiMap = ['😢', '😕', '😐', '😊', '😁'];
+      const emojiSpan = document.getElementById('happinessEmoji');
+      if (emojiSpan && typeof budgetApp.happinessLevel === 'number') {
+        emojiSpan.textContent = emojiMap[budgetApp.happinessLevel] || '';
+      }
+
     });
 
     // Render budget categories table
@@ -448,20 +469,20 @@ function tryNext(input, select, name) {
     });
 
     // Update total
-    document.getElementById('totalMonthlyBudget').textContent = 
+    document.getElementById('totalMonthlyBudget').textContent =
       `$${totalMonthly.toLocaleString()}`;
   }
 
   // Add this near the end of the DOMContentLoaded event listener
-    document.getElementById('loadBudgetInput').addEventListener('change', function(e) {
+  document.getElementById('loadBudgetInput').addEventListener('change', function (e) {
     const file = e.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function (e) {
       try {
         const data = JSON.parse(e.target.result);
-        
+
         // Validate the data
         if (!data.goals || !data.takeHomePay || !data.allocations) {
           throw new Error('Invalid budget file format');
@@ -486,12 +507,12 @@ function tryNext(input, select, name) {
         budgetApp.expenseState.allocations = data.allocations;
         currentRow = 0;
         document.getElementById('progressBars').classList.add('visible');
-        
+
         // Render all rows first
         categories.forEach((_, idx) => {
           renderRow(idx);
         });
-        
+
         // Now populate all rows with saved data
         categories.forEach((cat, idx) => {
           const row = document.querySelectorAll('#expenseGrid .expense-row')[idx];
@@ -500,13 +521,13 @@ function tryNext(input, select, name) {
             const input = row.querySelector('input');
             const value = data.values?.[cat.name];
             const amount = data.allocations[cat.name];
-            
+
             if (select && value) {
               select.classList.remove('untouched');
               select.value = value;
               select.classList.add('filled');
             }
-            
+
             if (input && amount) {
               input.classList.remove('untouched');
               input.value = amount;

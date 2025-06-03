@@ -404,4 +404,40 @@ button {
     padding: 0.5em;
   }
 }
+/* Step Progress Bar */
+#stepProgressBar {
+  display: flex;
+  justify-content: space-around;
+  margin: 1em 0 1.5em;
+  padding: 0.5em;
+  background: #f0f4f8;
+  border-radius: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.step-indicator {
+  width: 2em;
+  height: 2em;
+  border-radius: 50%;
+  background: #ccc;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1em;
+}
+
+.step-indicator.active {
+  background: #2196f3;
+}
+
+/* Optional: hide on very small screens */
+@media (max-width: 400px) {
+  #stepProgressBar {
+    display: none;
+  }
+}
 
