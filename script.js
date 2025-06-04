@@ -32,11 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
     },
 
     goToStep(n) {
-      document.querySelectorAll('.step-indicator').forEach(dot => {
-        dot.classList.remove('active');
+      document.querySelectorAll('.step-segment').forEach(seg => {
+        seg.classList.remove('active');
       });
-
-      document.querySelector(`.step-indicator[data-step="${n}"]`)?.classList.add('active');
+      document.querySelector(`.step-segment[data-step="${n}"]`)?.classList.add('active');      
 
       document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
 
@@ -46,6 +45,26 @@ document.addEventListener('DOMContentLoaded', () => {
       if (n === 3) {
         renderValueChart();
         renderFeedback();
+
+        const takeHomeSpan = document.getElementById('takeHomeAmount');
+        if (takeHomeSpan) {
+          takeHomeSpan.textContent = budgetApp.takeHomePay.toLocaleString();
+        }
+
+        const emojis = document.querySelectorAll('#satisfactionCheck .emoji-rating span');
+        if (typeof budgetApp.happinessLevel === 'number') {
+          emojis.forEach(e => e.classList.remove('active'));
+          emojis[budgetApp.happinessLevel]?.classList.add('active');
+        }
+
+        const hint = document.getElementById('emojiHint');
+        hint.textContent = (budgetApp.happinessLevel != null)
+          ? (budgetApp.happinessLevel <= 2
+            ? "🔄 Consider going back to make a happier plan."
+            : "👍🏻 Great! Your plan aligns with your happiness.")
+          : "👉 Tap an emoji to share how your plan feels.";
+
+        document.getElementById('continueTo4').disabled = (budgetApp.happinessLevel == null);
       } else if (n === 4) {
         renderStep4Summary();
       }
@@ -235,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   renderSavingsGoals();
-  document.querySelector('.step-indicator[data-step="1"]')?.classList.add('active');
+  document.querySelector('.step-segment[data-step="1"]')?.classList.add('active');
 
   // --- Step 3 Logic ---  // Step 3 rendering functions
 
@@ -400,14 +419,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   document.querySelectorAll('#satisfactionCheck .emoji-rating span').forEach((span, idx) => {
     span.addEventListener('click', () => {
-      // Remove active class from all emojis
-      document.querySelectorAll('#satisfactionCheck .emoji-rating span').forEach(s =>
-        s.classList.remove('active'));
+      // 1) Remove .active from all emojis before highlighting the new one
+      document
+        .querySelectorAll('#satisfactionCheck .emoji-rating span')
+        .forEach(s => s.classList.remove('active'));
 
-      // Add active class to selected emoji
+      // 2) Add .active only to the clicked emoji
       span.classList.add('active');
-      // Store happiness level
+
+      // 3) Store the selected index
       budgetApp.happinessLevel = idx;
+
+      // 4) Update hint text and pulse on Back button
       const hint = document.getElementById('emojiHint');
       const backButton = document.getElementById('backTo2From3');
 
@@ -418,10 +441,12 @@ document.addEventListener('DOMContentLoaded', () => {
         hint.textContent = "👍🏻 Great! Your plan aligns with your happiness.";
         backButton.classList.remove('pulse');
       }
+
+      // 5) Enable the Continue button
       document.getElementById('continueTo4').disabled = false;
     });
   });
-
+  
   document.getElementById('continueTo2_5').addEventListener('click', () => budgetApp.goToStep(3));
   document.getElementById('backTo2From3').addEventListener('click', () => budgetApp.goToStep(2)); document.getElementById('continueTo4').addEventListener('click', () => {
     budgetApp.goToStep(4);
@@ -473,7 +498,6 @@ document.addEventListener('DOMContentLoaded', () => {
       `$${totalMonthly.toLocaleString()}`;
   }
 
-  // Add this near the end of the DOMContentLoaded event listener
   document.getElementById('loadBudgetInput').addEventListener('change', function (e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -576,6 +600,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('loadBudgetBtn')?.addEventListener('click', () => {
     document.getElementById('loadBudgetInput').click();
   });
+  window.budgetApp = budgetApp;
 
   // End of the DOMContentLoaded event listener
 });

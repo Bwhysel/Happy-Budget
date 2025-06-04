@@ -8,12 +8,13 @@
 </head>
 <body>
     <main>
-      <!-- Step Progress Bar -->
+      <!-- Progress Bar -->
       <div id="stepProgressBar">
-      <div class="step-indicator" data-step="1">1</div>
-      <div class="step-indicator" data-step="2">2</div>
-      <div class="step-indicator" data-step="3">3</div>
-      <div class="step-indicator" data-step="4">4</div></div>
+        <div class="step-segment" data-step="1"></div>
+        <div class="step-segment" data-step="2"></div>
+        <div class="step-segment" data-step="3"></div>
+        <div class="step-segment" data-step="4"></div>
+      </div>      
     <h1>Create Your Happy Budget<sup>®</sup> 😁</h1>
     <p>A Happy Budget is a compassionate and sustainable plan for spending and saving that respects your humanity and promotes happiness.</p>
     <p>🔐 Your budget stays private! Nothing is saved or sent unless you choose to share it.</p>    <div id="step1" class="step active">
@@ -26,8 +27,8 @@
           style="width: 100%; margin-top: 0.5em; padding: 0.75em; border: 1px solid #ccc; border-radius: 4px;"></textarea>
       </div>            
       <div class="nav-buttons">
-        <button id="loadBudgetBtn" class="secondary">Load Saved Budget 📂</button>
-        <button id="continueButtonSavings" disabled>Continue 👍</button>
+        <button id="loadBudgetBtn" class="secondary">Upload Saved Budget 📂</button>
+        <button id="continueButtonSavings" disabled>Continue</button>
       </div>
       <input type="file" id="loadBudgetInput" accept=".json" style="display: none;">
     </div>
@@ -36,8 +37,10 @@
       <h2>2. Enter Your Income, Values, and Allocations</h2>
       <div class="expense-row">
         <label for="takeHomePayInput">Enter your monthly take-home pay (after taxes):</label>
-        <input type="number" id="takeHomePayInput" class="untouched" placeholder="e.g. 8000" min="0" step="10">
-      </div>
+        <div class="input-group">
+          <input type="number" id="takeHomePayInput" class="untouched" placeholder="e.g. 8000" min="0" step="100">
+        </div>
+      </div>      
       <div id="expenseGrid"></div>
     <!-- Progress bars only -->
     <div id="progressBars">
@@ -56,14 +59,17 @@
     
     <!-- Navigation: back is always visible; continue is disabled until ready -->
     <div class="nav-buttons">
-      <button id="backTo1">← Back</button>
-      <button id="continueTo2_5" disabled>Continue 👍</button>
+      <button id="backTo1">Back</button>
+      <button id="continueTo2_5" disabled>Continue</button>
     </div>
 
     </div>
     <div id="step3" class="step">
-      <h2>3: Reflect & Adjust</h2>
-      <p>🧘 This is a space to reflect. No judgment—just awareness. You've made thoughtful choices—now take a moment to notice what they mean.</p>
+      <h2>3. Reflect & Adjust</h2>
+      <p id="reflectIntro" class="reflection-intro">
+        🧘 Here’s how you’ve allocated your $<span id="takeHomeAmount"></span> take-home pay to the values that matter most to
+        you. Take a moment to pause and reflect on this chart and some observations below.
+      </p>      
 
       <section id="valueChart">
         <h3>📊 Spending by Personal Value</h3>
@@ -91,8 +97,8 @@
         </div>
         <p id="emojiHint"></p>
       </section><div class="nav-buttons">
-        <button id="backTo2From3">← Back to Step 2</button>
-        <button id="continueTo4" disabled>Continue to Step 4 →</button>
+        <button id="backTo2From3">Back</button>
+        <button id="continueTo4" disabled>Continue</button>
       </div>
     </div>    
     <div id="step4" class="step">
@@ -137,11 +143,14 @@
           <textarea id="commitmentText" placeholder="I will... (e.g., automate savings, reduce spending on X, share my plan with Y)" rows="4"></textarea>
         </section>
       </div>      
-      
+      <p style="margin-top: 2em;">
+        💡 Share your Happy Budget<sup>®</sup> with a partner, counselor, or advisor. Use the Print and Save
+        buttons to get support making your plans real.
+      </p>      
       <div class="nav-buttons">
         <button onclick="budgetApp.goToStep(3)">Back</button>
-        <button id="printBudgetBtn">Print</button>
-        <button id="saveBudgetBtn">Save</button>
+        <button id="printBudgetBtn">Print 🖨️</button>
+        <button id="saveBudgetBtn">Save 💾</button>
       </div>
       
       
