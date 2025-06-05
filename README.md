@@ -1,2 +1,2 @@
-# Homebuyer
-A collection of SPA to help people manage their finances and buy their first homes.
+# Happy Budget
+An SPA to help people create a values-based, zero-base personal budget.

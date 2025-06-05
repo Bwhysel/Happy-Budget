@@ -165,7 +165,11 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderRow(idx) {
     const { name, emoji, defaultPct } = categories[idx];
     const container = document.getElementById('expenseGrid');
-    if (idx === 0) container.innerHTML = '';
+    if (idx === 0) {
+      container.innerHTML = '';
+      const headerRow = document.getElementById('expenseHeaderRow');
+      if (headerRow) headerRow.style.display = 'flex';
+    }   
 
     const row = document.createElement('div');
     row.className = 'expense-row';
