@@ -20,9 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const budgetApp = {
     selectedGoals: [],
+    goalReflection: '',
     takeHomePay: 0,
     otherInput: null,
     happinessLevel: null, // 0–4 representing the selected emoji
+    commitment: '', // stores user's commitment
+
 
     expenseState: {
       allocations: {},
@@ -33,10 +36,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     goToStep(n) {
       document.querySelectorAll('.step-segment').forEach(seg => {
-        seg.classList.remove('active');
+        const stepNum = parseInt(seg.getAttribute('data-step'), 10);
+        if (stepNum <= n) {
+          seg.classList.add('active');
+        } else {
+          seg.classList.remove('active');
+        }
       });
-      document.querySelector(`.step-segment[data-step="${n}"]`)?.classList.add('active');      
-
+         
       document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
 
       const nextStep = document.getElementById(`step${n}`);
@@ -137,18 +144,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function tryNext(input, select, name) {
+  function tryNext(input, select, name, idx) {
     if (input.value.trim() !== '' && select.value !== '') {
       budgetApp.expenseState.allocations[name] = parseFloat(input.value) || 0;
       input.classList.add('filled');
       select.classList.add('filled');
       updateProgress();
 
-      if (currentRow < categories.length - 1) {
+      if (idx === currentRow && currentRow < categories.length - 1) {
         currentRow++;
         renderRow(currentRow);
-        document.querySelectorAll('#expenseGrid .expense-row')[currentRow]?.querySelector('select')?.focus();
+        document.querySelectorAll('#expenseGrid .expense-row')[currentRow]
+          ?.querySelector('select')
+          ?.focus();
       }
+      
     }
   }
 
@@ -173,6 +183,14 @@ document.addEventListener('DOMContentLoaded', () => {
       select.appendChild(opt);
     });
     select.classList.add('untouched');
+    // Add styling when a value is selected
+    select.addEventListener('change', () => {
+      if (select.value.trim() !== '') {
+        select.classList.add('filled');
+      } else {
+        select.classList.remove('filled');
+      }
+    });
 
     const input = document.createElement('input');
     input.type = 'number';
@@ -205,7 +223,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    input.addEventListener('blur', () => tryNext(input, select, name));
+    input.addEventListener('blur', () => tryNext(input, select, name, idx));
+
 
     const inputGroup = document.createElement('div');
     inputGroup.className = 'input-group';
@@ -382,9 +401,10 @@ document.addEventListener('DOMContentLoaded', () => {
       takeHomePay: budgetApp.takeHomePay,
       allocations: budgetApp.expenseState.allocations,
       values: {}, // Store values for each category
+      goalReflection: document.getElementById("goalReflection")?.value || "",
       commitment: document.getElementById("commitmentText")?.value || "",
       happinessLevel: budgetApp.happinessLevel
-    };
+    };    
 
     try {
       // Collect values for each category
@@ -469,6 +489,17 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
     });
+    // Display goal text if it exists
+    const goalTextEl = document.getElementById('goalTextDisplay');
+    if (goalTextEl) {
+      let rawText = document.getElementById('goalReflection')?.value || '';
+      if (!rawText && budgetApp.goalReflection) {
+        rawText = budgetApp.goalReflection;
+      }
+      goalTextEl.textContent = rawText.trim() ? `“${rawText.trim()}”` : '';
+      goalTextEl.style.display = rawText.trim() ? 'block' : 'none';
+    }
+
 
     // Render budget categories table
     const tableBody = document.querySelector('#budgetSummaryTable tbody');
@@ -562,6 +593,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Update all progress
         updateProgress();        // If commitment exists, prepare it
+        if (data.goalReflection) {
+          const goalReflection = document.getElementById('goalReflection');
+          if (goalReflection) {
+            goalReflection.value = data.goalReflection;
+          }
+          budgetApp.goalReflection = data.goalReflection;
+        }        
         if (data.commitment) {
           const commitmentText = document.getElementById('commitmentText');
           if (commitmentText) {
@@ -600,6 +638,11 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('loadBudgetBtn')?.addEventListener('click', () => {
     document.getElementById('loadBudgetInput').click();
   });
+
+  document.getElementById('commitmentText')?.addEventListener('input', e => {
+    budgetApp.commitment = e.target.value;
+  });
+  
   window.budgetApp = budgetApp;
 
   // End of the DOMContentLoaded event listener
