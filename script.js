@@ -80,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // =======================
 
   // Updates category and budget progress bars and button states
+  // Updates category and budget progress bars and button states
   function updateProgress() {
     const continueBtn = document.getElementById('continueTo2_5');
     const totalAlloc = budgetApp.expenseState.getTotal();
@@ -107,6 +108,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('categoryLabel').textContent = completed;
     continueBtn.disabled = !(remaining === 0 && completed === categories.length);
 
+    //update the final placeholder for unexpected expenses
+    const lastInput = document.querySelector('.expense-row[data-category="Unexpected & Miscellaneous"] input');
+    if (lastInput) {
+      lastInput.placeholder = `e.g. ${Math.round(getRemaining())}`;
+    }
   }
 
   function renderSavingsGoals() {
