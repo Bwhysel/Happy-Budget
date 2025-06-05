@@ -6,20 +6,52 @@ body { font-family: 'Roboto', Arial, sans-serif; padding: 1em; max-width: 700px;
       gap: 1em; 
       align-items: center; 
     }
+    .expense-header-row {
+      display: flex;
+      align-items: center;
+      gap: 1em;
+      margin-bottom: 0.5em;
+    }
+    
+    .expense-header-row label {
+      min-width: 160px;
+      flex: 2;
+    }
+    
+    .expense-header-row .input-group {
+      flex: 3;
+      display: flex;
+      gap: 1em;
+    }
+    
     .expense-row label { 
       min-width: 160px; 
       flex: 2; 
+    }
+
+    .right-align {
+      text-align: right;
+      flex: 1;
     }
     .input-group { 
       flex: 3;
       display: flex;
       gap: 1em;
     }
+    input[type="number"] {
+      text-align: right;
+    }
+    
     .expense-row select, .expense-row input { 
       flex: 1; 
       min-width: 120px; 
       padding: 0.3em; 
     }
+        input[type="number"] {
+          text-align: right;
+          padding-right: 0.75em;
+    
+        }
     .expense-row input.untouched, .expense-row select.untouched { background-color: #fff9c4; }
     .expense-row input.filled, .expense-row select.filled { background-color: #c8e6c9; }
     /* take-home pay input coloring */
@@ -388,7 +420,12 @@ button {
 }
 
 #commitmentSection {
-  background: #fff !important;
+  background-color: #f0f4c3;
+  /* soft yellow-green */
+  padding: 1.5em;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dce775;
 }
 
 @media (max-width: 600px) {

@@ -15,7 +15,7 @@
         <div class="step-segment" data-step="3"></div>
         <div class="step-segment" data-step="4"></div>
       </div>      
-    <h1>Create Your Happy Budget<sup>®</sup> 😁</h1>
+    <h1>😁 Create Your Happy Budget<sup>®</sup></h1>
     <p>A Happy Budget is a compassionate and sustainable plan for spending and saving that respects your humanity and promotes happiness.</p>
     <p>🔐 Your budget stays private! Nothing is saved or sent unless you choose to share it.</p>    <div id="step1" class="step active">
 <h2>1. Set Your Savings Goals</h2>
@@ -34,26 +34,34 @@
     </div>
 
     <div id="step2" class="step">
-      <h2>2. Enter Your Income, Values, and Allocations</h2>
+      <h2>2. Enter Your Income, Values, and Spending Plans</h2>
       <div class="expense-row">
         <label for="takeHomePayInput">Enter your monthly take-home pay (after taxes):</label>
         <div class="input-group">
           <input type="number" id="takeHomePayInput" class="untouched" placeholder="e.g. 8000" min="0" step="100">
         </div>
-      </div>      
+      </div> 
+      <div class="expense-header-row">
+        <label><strong>Category</strong></label>
+        <div class="input-group">
+          <label><strong>Value</strong></label>
+          <label class="right-align"><strong>Amount ($)</strong></label>
+        </div>
+      </div>           
       <div id="expenseGrid"></div>
     <!-- Progress bars only -->
     <div id="progressBars">
       <div class="progress-row">
         <div class="progress-section">
+          <label>Categories Completed (<span id="categoryLabel">0</span>/13)</label>
+          <progress id="categoryProgress" value="0" max="13"></progress>
+        </div>
+        <div class="progress-section">
           <label>Budget Progress</label>
           <span id="remainingLabel"></span>
           <progress id="budgetProgress" value="0" max="100"></progress>
         </div>
-        <div class="progress-section">
-          <label>Categories Completed (<span id="categoryLabel">0</span>/13)</label>
-          <progress id="categoryProgress" value="0" max="13"></progress>
-        </div>
+
       </div>
     </div>
     
@@ -68,7 +76,7 @@
       <h2>3. Reflect & Adjust</h2>
       <p id="reflectIntro" class="reflection-intro">
         🧘 Here’s how you’ve allocated your $<span id="takeHomeAmount"></span> take-home pay to the values that matter most to
-        you. Take a moment to pause and reflect on this chart and some observations below.
+        you. Take a moment to pause and reflect on this chart and some observations below. (Tap on the chart for details.)
       </p>      
 
       <section id="valueChart">
@@ -88,7 +96,8 @@
       </section>
 
       <section id="satisfactionCheck">
-        <h3>How Does This Plan Feel?</h3>        <div class="emoji-rating">
+        <h3>How Do You Feel About This Plan?</h3>        
+        <div class="emoji-rating">
           <span>😢</span>
           <span>😕</span>
           <span>😐</span>
@@ -109,6 +118,7 @@
         <section id="savingsGoalsSummary">
           <h3>💫 Your Savings Goals</h3>
           <div id="selectedGoalsList"></div>
+          <div id="goalTextDisplay" class="goal-text-display"></div>
         </section>
 
         <section id="categoryTableSummary">
@@ -139,8 +149,8 @@
         </p>        
         <section id="commitmentSection">
           <h3>✍️ Your Commitment</h3>
-          <p>Take a moment to commit to your next steps:</p>
-          <textarea id="commitmentText" placeholder="I will... (e.g., automate savings, reduce spending on X, share my plan with Y)" rows="4"></textarea>
+          <p>Take a moment to plan your next steps:</p>
+          <textarea id="commitmentText" placeholder="I will... (e.g., automate bank regular transfers from checking to savings, reduce spending on X, share my plan with Y)" rows="4"></textarea>
         </section>
       </div>      
       <p style="margin-top: 2em;">
