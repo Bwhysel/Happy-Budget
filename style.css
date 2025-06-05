@@ -24,6 +24,12 @@ body { font-family: 'Roboto', Arial, sans-serif; padding: 1em; max-width: 700px;
       gap: 1em;
     }
     
+    .input-group {
+      flex: 3;
+      display: flex;
+      gap: 1em;
+    }
+    
     .expense-row label { 
       min-width: 160px; 
       flex: 2; 
@@ -31,13 +37,8 @@ body { font-family: 'Roboto', Arial, sans-serif; padding: 1em; max-width: 700px;
 
     .right-align {
       text-align: right;
-      flex: 1;
     }
-    .input-group { 
-      flex: 3;
-      display: flex;
-      gap: 1em;
-    }
+
     input[type="number"] {
       text-align: right;
     }
@@ -107,6 +108,7 @@ button.secondary:hover {
   border-radius: 4px;
   margin: 0.25em 0;
   cursor: pointer;
+  font-size: 1em;
 }
 
 .value-bar {
@@ -263,12 +265,6 @@ progress {
   padding-bottom: 4em;
 }
 
-/* Make sure buttons stay on top of other content */
-button {
-  position: relative;
-  z-index: 101;
-}
-
 @keyframes pulse {
   0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.4); }
   70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(33, 150, 243, 0); }
@@ -306,27 +302,7 @@ button {
   font-weight: bold;
 }
 
-.value-bar-container {
-  font-size: 1em;
-}
-.value-detail {
-  font-size: 1em;
-  line-height: 1.5;
-}
 
-.value-detail td {
-  padding: 0.5em 0.75em;
-  font-size: 1em;
-}
-#valueChart table {
-  font-size: 1.1rem;
-  line-height: 1.5;
-}
-
-#valueChart table td,
-#valueChart table th {
-  padding: 0.5em 0.75em;
-}
 #valueChart .value-details,
 #valueChart .value-details * {
   font-size: 1rem !important;
@@ -438,18 +414,6 @@ button {
     padding: 0.5em;
   }
 }
-/* Step Progress Bar */
-#stepProgressBar {
-  display: flex;
-  justify-content: space-around;
-  margin: 1em 0 1.5em;
-  padding: 0.5em;
-  background: #f0f4f8;
-  border-radius: 12px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
 
 #stepProgressBar {
   display: flex;
@@ -469,9 +433,6 @@ button {
 
 .step-segment.active {
   background-color: #2196f3;
-}
-.step-indicator.active {
-  background: #2196f3;
 }
 
 /* Optional: hide on very small screens */

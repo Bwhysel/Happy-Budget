@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // =======================
+  // Step 1: Savings Goals
+  // =======================
   const savingsGoals = ['🚨 Emergency Fund', '💳 Debt Reduction', '🏠 Down Payment', '📚 Education', '👩‍💼 New Business', '🔧 Repairs', '👵 Comfortable Old Age', '✨ Other'];
   const categories = [
     { name: 'Savings & Debt Reduction', emoji: '💰', defaultPct: 0.10 },
@@ -20,9 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const budgetApp = {
     selectedGoals: [],
-    goalReflection: '',
     takeHomePay: 0,
-    otherInput: null,
     happinessLevel: null, // 0–4 representing the selected emoji
     commitment: '', // stores user's commitment
 
@@ -58,49 +59,31 @@ document.addEventListener('DOMContentLoaded', () => {
           takeHomeSpan.textContent = budgetApp.takeHomePay.toLocaleString();
         }
 
-        const emojis = document.querySelectorAll('#satisfactionCheck .emoji-rating span');
         if (typeof budgetApp.happinessLevel === 'number') {
-          emojis.forEach(e => e.classList.remove('active'));
-          emojis[budgetApp.happinessLevel]?.classList.add('active');
-        }
-
-        const hint = document.getElementById('emojiHint');
-        hint.textContent = (budgetApp.happinessLevel != null)
-          ? (budgetApp.happinessLevel <= 2
-            ? "🔄 Consider going back to make a happier plan."
-            : "👍🏻 Great! Your plan aligns with your happiness.")
-          : "👉 Tap an emoji to share how your plan feels.";
-
-        document.getElementById('continueTo4').disabled = (budgetApp.happinessLevel == null);
+          setEmojiRating(budgetApp.happinessLevel);
+        } else {
+          document.getElementById('emojiHint').textContent = "👉 Tap an emoji to share how your plan feels.";
+          document.getElementById('continueTo4').disabled = true;
+        }        
       } else if (n === 4) {
         renderStep4Summary();
       }
     }
   };
   
-
+  // Calculates remaining unallocated income
   function getRemaining() {
     return budgetApp.takeHomePay - budgetApp.expenseState.getTotal();
   }
+  // =======================
+  // Step 2: Income & Expense Grid
+  // =======================
 
-  function updateUnexpectedPlaceholder() {
-    const unexpectedInput = document.getElementById('unexpectedInput');
-    const remainingLabel = document.getElementById('remainingLabel');
-    const match = remainingLabel.textContent.match(/\$([\d,]+)/);
-    if (match && unexpectedInput) {
-      const remaining = parseInt(match[1].replace(/,/g, ''));
-      unexpectedInput.placeholder = `e.g. ${remaining}`;
-    }
-  }
-
+  // Updates category and budget progress bars and button states
   function updateProgress() {
     const continueBtn = document.getElementById('continueTo2_5');
     const totalAlloc = budgetApp.expenseState.getTotal();
     const remaining = getRemaining();
-
-    if (budgetApp.otherInput) {
-      budgetApp.otherInput.placeholder = `e.g. ${Math.max(0, Math.round(remaining))}`;
-    }
 
     const bp = document.getElementById('budgetProgress');
     if (remaining < 0) {
@@ -124,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('categoryLabel').textContent = completed;
     continueBtn.disabled = !(remaining === 0 && completed === categories.length);
 
-    updateUnexpectedPlaceholder();
   }
 
   function renderSavingsGoals() {
@@ -279,8 +261,11 @@ document.addEventListener('DOMContentLoaded', () => {
   renderSavingsGoals();
   document.querySelector('.step-segment[data-step="1"]')?.classList.add('active');
 
-  // --- Step 3 Logic ---  // Step 3 rendering functions
+  // =======================
+  // Step 3: Reflect & Feedback
+  // =======================
 
+  // Displays value-based spending chart with interactive breakdown
   function renderValueChart() {
     const chart = document.getElementById('valueChart');
     chart.innerHTML = '';
@@ -363,6 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Provides personalized feedback based on budget allocation
   function renderFeedback() {
     const savings = budgetApp.expenseState.allocations['Savings & Debt Reduction'] || 0;
     const housing = budgetApp.expenseState.allocations['Housing'] || 0;
@@ -395,7 +381,32 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('zeroValueFeedback').textContent = unused.length
       ? `💡 You didn’t allocate anything to: ${unused.join(', ')}.`
       : `✅ You allocated something to every value.`;
-  } function saveFinalData() {
+  } 
+  // Visually selects the emoji rating and updates UI feedback
+  function setEmojiRating(idx) {
+    const emojis = document.querySelectorAll('#satisfactionCheck .emoji-rating span');
+    emojis.forEach(e => e.classList.remove('active'));
+    emojis[idx]?.classList.add('active');
+
+    budgetApp.happinessLevel = idx;
+
+    const hint = document.getElementById('emojiHint');
+    const backButton = document.getElementById('backTo2From3');
+
+    if (idx <= 2) {
+      hint.textContent = "🔄 Consider going back to make a happier plan.";
+      backButton.classList.add('pulse');
+    } else {
+      hint.textContent = "👍🏻 Great! Your plan aligns with your happiness.";
+      backButton.classList.remove('pulse');
+    }
+
+    document.getElementById('continueTo4').disabled = false;
+  }  
+  
+  // Prepares and downloads the user's budget data as a JSON file
+
+  function saveFinalData() {
     // Get the current date for the filename
     const now = new Date();
     const dateStr = now.toISOString().split('T')[0];
@@ -442,33 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   document.querySelectorAll('#satisfactionCheck .emoji-rating span').forEach((span, idx) => {
-    span.addEventListener('click', () => {
-      // 1) Remove .active from all emojis before highlighting the new one
-      document
-        .querySelectorAll('#satisfactionCheck .emoji-rating span')
-        .forEach(s => s.classList.remove('active'));
-
-      // 2) Add .active only to the clicked emoji
-      span.classList.add('active');
-
-      // 3) Store the selected index
-      budgetApp.happinessLevel = idx;
-
-      // 4) Update hint text and pulse on Back button
-      const hint = document.getElementById('emojiHint');
-      const backButton = document.getElementById('backTo2From3');
-
-      if (idx <= 2) {
-        hint.textContent = "🔄 Consider going back to make a happier plan.";
-        backButton.classList.add('pulse');
-      } else {
-        hint.textContent = "👍🏻 Great! Your plan aligns with your happiness.";
-        backButton.classList.remove('pulse');
-      }
-
-      // 5) Enable the Continue button
-      document.getElementById('continueTo4').disabled = false;
-    });
+    span.addEventListener('click', () => setEmojiRating(idx));
   });
   
   document.getElementById('continueTo2_5').addEventListener('click', () => budgetApp.goToStep(3));
@@ -476,7 +461,11 @@ document.addEventListener('DOMContentLoaded', () => {
     budgetApp.goToStep(4);
     renderStep4Summary();
   });
+  // =======================
+  // Step 4: Final Summary & Commit
+  // =======================
 
+  // Shows final savings, values, and budget summary on Step 4
   function renderStep4Summary() {
     // Render savings goals
     const goalsList = document.getElementById('selectedGoalsList');
@@ -486,24 +475,22 @@ document.addEventListener('DOMContentLoaded', () => {
       chip.className = 'goal-chip';
       chip.textContent = goal;
       goalsList.appendChild(chip);
-      const emojiMap = ['😢', '😕', '😐', '😊', '😁'];
-      const emojiSpan = document.getElementById('happinessEmoji');
-      if (emojiSpan && typeof budgetApp.happinessLevel === 'number') {
-        emojiSpan.textContent = emojiMap[budgetApp.happinessLevel] || '';
-      }
-
     });
+
+    // ✅ Set emoji once, outside the loop
+    const emojiMap = ['😢', '😕', '😐', '😊', '😁'];
+    const emojiSpan = document.getElementById('happinessEmoji');
+    if (emojiSpan && typeof budgetApp.happinessLevel === 'number') {
+      emojiSpan.textContent = emojiMap[budgetApp.happinessLevel] || '';
+    }
+
     // Display goal text if it exists
     const goalTextEl = document.getElementById('goalTextDisplay');
     if (goalTextEl) {
       let rawText = document.getElementById('goalReflection')?.value || '';
-      if (!rawText && budgetApp.goalReflection) {
-        rawText = budgetApp.goalReflection;
-      }
       goalTextEl.textContent = rawText.trim() ? `“${rawText.trim()}”` : '';
       goalTextEl.style.display = rawText.trim() ? 'block' : 'none';
     }
-
 
     // Render budget categories table
     const tableBody = document.querySelector('#budgetSummaryTable tbody');
@@ -531,7 +518,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update total
     document.getElementById('totalMonthlyBudget').textContent =
       `$${totalMonthly.toLocaleString()}`;
-  }
+  }  
 
   document.getElementById('loadBudgetInput').addEventListener('change', function (e) {
     const file = e.target.files[0];
@@ -613,14 +600,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Restore happiness level if it exists
         if (typeof data.happinessLevel === 'number') {
-          budgetApp.happinessLevel = data.happinessLevel;
-          const emojis = document.querySelectorAll('#satisfactionCheck .emoji-rating span');
-          emojis.forEach(s => s.classList.remove('active'));
-          if (emojis[data.happinessLevel]) {
-            emojis[data.happinessLevel].classList.add('active');
-          }
-          document.getElementById('continueTo4').disabled = false;
-        }
+          setEmojiRating(data.happinessLevel);
+        }        
 
         // Show success message
         alert('Budget loaded successfully! 📊');
