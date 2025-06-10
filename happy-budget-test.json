@@ -1,0 +1,42 @@
+{
+  "savedOn": "2025-06-04T21:14:06.496Z",
+  "goals": [
+    "🚨 Emergency Fund",
+    "💳 Debt Reduction",
+    "🏠 Down Payment"
+  ],
+  "takeHomePay": 6000,
+  "allocations": {
+    "Savings & Debt Reduction": 600,
+    "Housing": 2800,
+    "Utilities & Internet": 200,
+    "Groceries & Essentials": 600,
+    "Transportation": 227,
+    "Health & Insurance": 300,
+    "Social, Dining & Entertainment": 350,
+    "Phone, Subscriptions & Tech": 150,
+    "Gifts & Giving": 175,
+    "Education & Training": 75,
+    "Clothing & Self-Care": 100,
+    "Children & Pets": 100,
+    "Unexpected & Miscellaneous": 323
+  },
+  "values": {
+    "Savings & Debt Reduction": "Autonomy",
+    "Housing": "Basic Needs",
+    "Utilities & Internet": "Basic Needs",
+    "Groceries & Essentials": "Health",
+    "Transportation": "Basic Needs",
+    "Health & Insurance": "Health",
+    "Social, Dining & Entertainment": "Social Connectedness",
+    "Phone, Subscriptions & Tech": "Fun & Leisure",
+    "Gifts & Giving": "Giving & Helping Others",
+    "Education & Training": "Empowerment",
+    "Clothing & Self-Care": "Respect",
+    "Children & Pets": "Social Connectedness",
+    "Unexpected & Miscellaneous": "Financial Security"
+  },
+  "commitment": "I will try to find a roommate to reduce rent and have my bank automatically transfer money from checking to savings after every paycheck clears.",
+  "goalReflection": "I want a $1,000 emergency fund and zero credit card debt. This and saving for a home will make me feel more in control and secure about the future.",
+  "happinessLevel": 4
+}
