@@ -182,6 +182,25 @@ button.secondary:hover {
     padding: 1em;
     margin: 0.5em -0.5em 0;
   }
+  .expense-header-row {
+    flex-wrap: wrap;
+  }
+
+  .expense-header-row label:first-child {
+    flex-basis: 100%;
+  }
+
+  .expense-header-row .input-group {
+    flex-wrap: nowrap;
+    width: 100%;
+    gap: 1em;
+  }
+
+  .expense-header-row .input-group label {
+    flex: 1;
+    white-space: nowrap;
+  }
+}
 }
 
 #feedbackSection {

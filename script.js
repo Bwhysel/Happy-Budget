@@ -133,22 +133,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function tryNext(input, select, name, idx) {
-    if (input.value.trim() !== '' && select.value !== '') {
+    if (input.value.trim() !== "" && select.value !== "") {
       budgetApp.expenseState.allocations[name] = parseFloat(input.value) || 0;
-      input.classList.add('filled');
-      select.classList.add('filled');
+      input.classList.add("filled");
+      select.classList.add("filled");
       updateProgress();
 
       if (idx === currentRow && currentRow < categories.length - 1) {
         currentRow++;
         renderRow(currentRow);
-        document.querySelectorAll('#expenseGrid .expense-row')[currentRow]
-          ?.querySelector('select')
-          ?.focus();
+
+        // Slight delay avoids dropdown auto-opening in iOS Edge
+        setTimeout(() => {
+          document
+            .querySelectorAll("#expenseGrid .expense-row")
+            [currentRow]?.querySelector("select")
+            ?.focus({ preventScroll: true });
+        }, 50);
       }
-      
     }
-  }
+  }  
 
   function renderRow(idx) {
     const { name, emoji, defaultPct } = categories[idx];
@@ -239,6 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
       currentRow = 0;
       document.getElementById('progressBars').classList.add('visible');
       renderRow(currentRow);
+      updateProgress();
       const firstRow = document.querySelector('#expenseGrid .expense-row');
       if (firstRow) {
         const select = firstRow.querySelector('select');
@@ -250,9 +255,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  takeHomePayInput.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') this.blur();
+// Add event listener for the input field to pupdate progress
+  takeHomePayInput.addEventListener("input", () => {
+    const pay = parseFloat(takeHomePayInput.value);
+    if (!isNaN(pay) && pay >= 0) {
+      budgetApp.takeHomePay = pay;
+      updateProgress();
+    }
   });
+  takeHomePayInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault(); // ← this is now valid
+      this.blur(); // triggers the blur handler
+    }
+  });
+  
+
 
   document.getElementById('backTo1').addEventListener('click', () => {
     budgetApp.goToStep(1);
