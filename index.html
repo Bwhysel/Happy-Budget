@@ -21,14 +21,15 @@
         <div class="step-segment" data-step="4"></div>
       </div>
       <h1>😁 Create Your Happy Budget<sup>®</sup></h1>
-      <p>
-        A Happy Budget is a compassionate and sustainable plan for spending and
-        saving that respects your humanity and promotes happiness.
-      </p>
-      <p>
-        🔐 Your budget stays private! Nothing is saved or sent unless you choose
-        to share it.
-      </p>
+<div id="introMessage" class="intro-message" aria-live="polite">
+  <p>
+    A Happy Budget is a kind and doable plan for spending and saving that respects your needs and supports your happiness.
+  </p>
+  <p>
+    🔐 Your budget stays private! Nothing is saved or shared unless you choose to.
+  </p>
+</div>
+
       <div id="step1" class="step active">
         <h2>1. Set Your Savings Goals</h2>
         <p>
@@ -57,7 +58,7 @@
           ></textarea>
         </div>
         <div class="nav-buttons">
-          <button id="loadBudgetBtn">Load Saved Budget 📂</button>
+          <button id="loadBudgetBtn">Load Saved Budget</button>
           <button id="continueButtonSavings" disabled>Continue</button>
         </div>
         <input
@@ -71,9 +72,15 @@
       <div id="step2" class="step">
         <h2>2. Enter Your Income, Values, and Spending Plans</h2>
         <div class="expense-row">
-          <label for="takeHomePayInput"
-            >Enter your monthly take-home pay (after taxes):</label
-          >
+          <label for="takeHomePayInput">
+  Take-home pay, after taxes:
+  <span class="tooltip-container">ℹ️
+    <span class="tooltip-text">
+      This is the total each month you get after taxes and deductions.
+    </span>
+  </span>
+</label>
+
           <div class="input-group">
             <input
               type="number"
@@ -103,7 +110,7 @@
           <label><strong>Category</strong></label>
           <div class="input-group">
             <label><strong>Value</strong></label>
-            <label class="right-align"><strong>Amount ($)</strong></label>
+            <label><strong>Amount ($)</strong></label>
           </div>
         </div>
         <div id="expenseGrid"></div>
@@ -152,7 +159,7 @@
           <h3>Are you Saving for What Matters?</h3>
           <p id="savingsFeedback">Loading...</p>
 
-          <h3>Are Your Housing Costs Sustainable?</h3>
+          <h3>Are Your Housing Costs Affordable?</h3>
           <p id="housingFeedback">Loading...</p>
         </section>
 
@@ -173,7 +180,7 @@
         </div>
       </div>
       <div id="step4" class="step">
-        <h2>4. Commit to Your Happy Budget</h2>
+        <h2>4. Plan for Your Happy Budget</h2>
         <p>
           👏 Congratulations! You're almost done! Here's your budget summary and
           next steps.

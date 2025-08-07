@@ -53,6 +53,9 @@ document.addEventListener("DOMContentLoaded", () => {
           seg.classList.remove("active");
         }
       });
+      // Show or hide the intro message based on the current step
+      document.getElementById("introMessage").style.display =
+        n === 1 ? "block" : "none";
 
       document
         .querySelectorAll(".step")
@@ -90,16 +93,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // =======================
   // Step 2: Income & Expense Grid
   // =======================
-
-  // Focuses the next input field in the grid
-  function focusNextInput(currentRow) {
-    const allRows = [...document.querySelectorAll("#expenseGrid .expense-row")];
-    const currentIdx = allRows.indexOf(currentRow);
-    const nextRow = allRows[currentIdx + 1];
-    if (nextRow) {
-      nextRow.querySelector("select")?.focus();
-    }
-  }
 
   // Updates category and budget progress bars and button states
   function updateProgress() {
@@ -182,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
     label.textContent = `${emoji} ${name}`;
 
     const select = document.createElement("select");
-    select.innerHTML = '<option value="">Pick a value...</option>';
+    select.innerHTML = '<option value="">Why this matters...</option>';
     [
       "Autonomy",
       "Basic Needs",

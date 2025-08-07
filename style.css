@@ -52,14 +52,6 @@ body {
   flex: 2;
 }
 
-.right-align {
-  text-align: right;
-}
-
-input[type="number"] {
-  text-align: right;
-}
-
 .expense-row select,
 .expense-row input {
   flex: 1;
@@ -68,7 +60,9 @@ input[type="number"] {
 }
 input[type="number"] {
   text-align: right;
-  padding-right: 0.75em;
+  padding: 0.3em 0.75em; /* smaller padding */
+  height: auto;           /* allow shrinking */
+  min-height: auto;       /* override mobile value */
 }
 .expense-row input.untouched,
 .expense-row select.untouched {
@@ -113,22 +107,7 @@ progress.negative::-webkit-progress-bar {
 .overspent-label {
   color: #e91e63;
 }
-/* Input group styles moved to unified definition */
 
-@media (max-width: 600px) {
-  .expense-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.5em;
-  }
-
-  .expense-row label {
-    width: 100%;
-  }
-}
-#valueChart {
-  margin-top: 2em;
-}
 #continueTo4:disabled {
   background-color: #90caf9;
   cursor: not-allowed;
@@ -388,6 +367,7 @@ progress {
   min-height: 100px;
 }
 #valueChart {
+  margin-top: 2em;
   font-size: 1.1em;
 }
 
@@ -532,16 +512,6 @@ progress {
   visibility: visible;
   opacity: 1;
 }
-@media (max-width: 600px) {
-  #budgetSummaryTable {
-    font-size: 0.85em;
-  }
-
-  #budgetSummaryTable th,
-  #budgetSummaryTable td {
-    padding: 0.5em;
-  }
-}
 
 #stepProgressBar {
   display: flex;
@@ -570,56 +540,112 @@ progress {
   gap: 1em;
   flex-wrap: wrap;
 }
-
 @media (max-width: 600px) {
-  .action-buttons {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.5em;
+  #budgetSummaryTable {
+    font-size: 0.85em;
   }
 
-  .action-buttons button {
-    width: 100%;
-    max-width: 240px;
-    margin: 0 auto;
-    min-height: 44px;
+  #budgetSummaryTable th,
+  #budgetSummaryTable td {
+    padding: 0.5em;
   }
 }
 
 /* Uniform button width for desktop */
+button,
+.toolkit-btn,
 .action-buttons button,
 .action-buttons .toolkit-btn {
   min-width: 160px;
   text-align: center;
 }
-/* Set default button width and alignment globally */
-button,
-.toolkit-btn {
-  min-width: 150px;
-  text-align: center;
-}
 
 /* Mobile stacking and full width */
-@media (max-width: 600px) {
-  button,
-  .toolkit-btn {
-    width: 100%;
-    max-width: 240px;
-    margin: 0 auto;
-    min-height: 44px;
+@media (max-width: 768px) {
+  .expense-row,
+  .expense-header-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75em;
   }
-}
 
-/* Full-width buttons on small screens */
-@media (max-width: 600px) {
+  .expense-row label {
+    width: 100%;
+    margin-bottom: 0.25em;
+  }
+
+  .input-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+@media (max-width: 768px) {
+  .expense-row,
+  .expense-header-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75em;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    width: 100%;
+  }
+
+  .input-group select,
+  .input-group input {
+    width: 100%;
+    max-width: none;
+    min-height: 44px;
+    padding: 0.5em;
+    font-size: 1rem;
+    line-height: 1.2;
+    box-sizing: border-box;
+  }
+
+  /* Remove duplicate styles here */
+  button,
+  .toolkit-btn,
   .action-buttons button,
   .action-buttons .toolkit-btn {
     width: 100%;
-    max-width: 240px;
+    max-width: 260px;
     margin: 0 auto;
     min-height: 44px;
+    padding: 0.5em;
+  }
+
+  .emoji-rating span {
+    font-size: 2.2rem;
   }
 }
+
+
+
+  input[type="number"],
+  select,
+  textarea,
+  button {
+    padding: 0.5em;
+    min-height: 44px;
+  }
+
+  button,
+  .toolkit-btn,
+  .action-buttons button,
+  .action-buttons .toolkit-btn {
+    width: 100%;
+    max-width: 260px;
+    margin: 0 auto;
+  }
+
+  .emoji-rating span {
+    font-size: 2.2rem;
+  }
+}
+
 
 /* Optional: hide on very small screens */
 @media (max-width: 400px) {
