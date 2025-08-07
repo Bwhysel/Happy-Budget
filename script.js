@@ -27,6 +27,11 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "Children & Pets", emoji: "👶", defaultPct: 0.05 },
     { name: "Unexpected & Miscellaneous", emoji: "✨", defaultPct: 0.1 },
   ];
+  // Safely set a property (like textContent or value) on an element, if it exists
+  function safeSet(id, prop, value) {
+    const el = document.getElementById(id);
+    if (el) el[prop] = value;
+  }
 
   const budgetApp = {
     selectedGoals: [],
@@ -585,33 +590,39 @@ document.addEventListener("DOMContentLoaded", () => {
   // =======================
   // Step 4: Final Summary & Commit
   // =======================
+  function updateSummaryDisplay() {
+    // Update savings goals
+    const goalsList = document.getElementById("selectedGoalsList");
+    if (goalsList) {
+      goalsList.innerHTML = "";
+      budgetApp.selectedGoals.forEach((goal) => {
+        const chip = document.createElement("div");
+        chip.className = "goal-chip";
+        chip.textContent = goal;
+        goalsList.appendChild(chip);
+      });
+    }
+
+    // Update goal text
+    let rawText = document.getElementById("goalReflection")?.value || "";
+    let trimmed = rawText.trim();
+    safeSet("goalTextDisplay", "textContent", trimmed ? `“${trimmed}”` : "");
+    const el = document.getElementById("goalTextDisplay");
+    if (el) el.style.display = trimmed ? "block" : "none";
+
+    // Update commitment text
+    safeSet("commitmentDisplay", "textContent", budgetApp.commitment || "");
+
+    // Update emoji
+    const emojiMap = ["😢", "😕", "😐", "😊", "😁"];
+    const emoji = emojiMap[budgetApp.happinessLevel] || "";
+    safeSet("happinessEmoji", "textContent", emoji);
+  }
 
   // Shows final savings, values, and budget summary on Step 4
   function renderStep4Summary() {
     // Render savings goals
-    const goalsList = document.getElementById("selectedGoalsList");
-    goalsList.innerHTML = "";
-    budgetApp.selectedGoals.forEach((goal) => {
-      const chip = document.createElement("div");
-      chip.className = "goal-chip";
-      chip.textContent = goal;
-      goalsList.appendChild(chip);
-    });
-
-    // ✅ Set emoji once, outside the loop
-    const emojiMap = ["😢", "😕", "😐", "😊", "😁"];
-    const emojiSpan = document.getElementById("happinessEmoji");
-    if (emojiSpan && typeof budgetApp.happinessLevel === "number") {
-      emojiSpan.textContent = emojiMap[budgetApp.happinessLevel] || "";
-    }
-
-    // Display goal text if it exists
-    const goalTextEl = document.getElementById("goalTextDisplay");
-    if (goalTextEl) {
-      let rawText = document.getElementById("goalReflection")?.value || "";
-      goalTextEl.textContent = rawText.trim() ? `“${rawText.trim()}”` : "";
-      goalTextEl.style.display = rawText.trim() ? "block" : "none";
-    }
+    updateSummaryDisplay();
 
     // Render budget categories table
     const tableBody = document.querySelector("#budgetSummaryTable tbody");
@@ -654,6 +665,21 @@ document.addEventListener("DOMContentLoaded", () => {
       reader.onload = function (e) {
         try {
           const data = JSON.parse(e.target.result);
+
+          // 🔄 Clear previous data and UI before loading new budget
+          budgetApp.expenseState.allocations = {};
+          budgetApp.selectedGoals = [];
+          budgetApp.goalReflection = "";
+          budgetApp.commitment = "";
+          budgetApp.happinessLevel = null;
+
+          safeSet("takeHomePayInput", "value", "");
+          safeSet("goalReflection", "value", "");
+          safeSet("commitmentText", "value", "");
+
+          // Remove all category rows from both grid and summary
+          document.getElementById("expenseGrid")?.replaceChildren();
+          document.getElementById("categoryTable")?.replaceChildren();
 
           // Validate the data
           if (!data.goals || !data.takeHomePay || !data.allocations) {
@@ -721,17 +747,12 @@ document.addEventListener("DOMContentLoaded", () => {
           // Update all progress
           updateProgress(); // If commitment exists, prepare it
           if (data.goalReflection) {
-            const goalReflection = document.getElementById("goalReflection");
-            if (goalReflection) {
-              goalReflection.value = data.goalReflection;
-            }
+            safeSet("goalReflection", "value", data.goalReflection);
             budgetApp.goalReflection = data.goalReflection;
           }
+
           if (data.commitment) {
-            const commitmentText = document.getElementById("commitmentText");
-            if (commitmentText) {
-              commitmentText.value = data.commitment;
-            }
+            safeSet("commitmentText", "value", data.commitment);
           }
 
           // Restore happiness level if it exists
@@ -783,6 +804,9 @@ document.addEventListener("DOMContentLoaded", () => {
       "_blank",
       "noopener,noreferrer"
     );
+  });
+  document.getElementById("printButton")?.addEventListener("click", () => {
+    window.print();
   });
 
   // End of the DOMContentLoaded event listener
