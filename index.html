@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Happy Budget® for Your Best Life</title>
     <link rel="stylesheet" href="style.css" />
-    <link rel="icon" href="https://decisionfish.com/wp-content/uploads/2016/02/cropped-squircle-df-vr-page-001-2-1.jpg" type="image/jpeg">
+    <link
+      rel="icon"
+      href="https://decisionfish.com/wp-content/uploads/2016/02/cropped-squircle-df-vr-page-001-2-1.jpg"
+      type="image/jpeg"
+    />
   </head>
   <body>
     <main>
@@ -53,7 +57,7 @@
           ></textarea>
         </div>
         <div class="nav-buttons">
-          <button id="loadBudgetBtn" class="secondary">
+          <button id="loadBudgetBtn">
             Load Saved Budget 📂
           </button>
           <button id="continueButtonSavings" disabled>Continue</button>
@@ -83,16 +87,21 @@
             />
           </div>
         </div>
-<blockquote id="valuesReminder" class="values-quote" style="display: none;">
-  🤔 For each spending category below, pause briefly and reflect: Why is this spending important to me? Then choose a value and amount that feel right.
-</blockquote>
+        <blockquote
+          id="valuesReminder"
+          class="values-quote"
+          style="display: none"
+        >
+          🤔 For each spending category below, pause briefly and reflect: Why is
+          this spending important to me? Then choose a value and amount that
+          feel right.
+        </blockquote>
 
         <div
           id="expenseHeaderRow"
           class="expense-header-row"
           style="display: none"
         >
-        
           <label><strong>Category</strong></label>
           <div class="input-group">
             <label><strong>Value</strong></label>
@@ -219,7 +228,8 @@
         <!-- Brief share prompt with tooltip trigger -->
         <div class="share-instructions">
           💡 Click <strong>Save Data</strong> to download your budget. You can
-          then share it with your partner, counselor, or advisor using a secure messaging app like
+          then share it with your partner, counselor, or advisor using a secure
+          messaging app like
           <a
             href="https://www.whatsapp.com/download/"
             target="_blank"
@@ -248,10 +258,16 @@
           </span>
         </div>
 
-        <div class="nav-buttons">
-          <button onclick="budgetApp.goToStep(3)">Back</button>
-          <button id="printBudgetBtn">Print</button>
-          <button id="saveBudgetBtn">Save</button>
+        <div class="action-buttons">
+          <button onclick="budgetApp.goToStep(3)">
+            Back
+          </button>
+          <button type="button" class="save-btn">Save Data</button>
+          <button type="button" class="print-btn">Print</button>
+          <button type="button" class="toolkit-btn">
+            Toolkit
+            <span style="font-size: 0.8em; vertical-align: middle">🔗</span>
+          </button>
         </div>
       </div>
 

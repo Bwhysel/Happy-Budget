@@ -321,7 +321,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-
   // Add event listener for the input field to update progress
   takeHomePayInput.addEventListener("input", () => {
     const pay = parseFloat(takeHomePayInput.value);
@@ -682,6 +681,9 @@ document.addEventListener("DOMContentLoaded", () => {
           const takeHomePayInput = document.getElementById("takeHomePayInput");
           takeHomePayInput.value = data.takeHomePay;
           takeHomePayInput.classList.add("filled"); // Load allocations and values
+          const reminder = document.getElementById("valuesReminder");
+          reminder.style.display = "block";
+          setTimeout(() => reminder.classList.add("show"), 10);
           budgetApp.expenseState.allocations = data.allocations;
           document.getElementById("progressBars").classList.add("visible");
 
@@ -765,6 +767,14 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   window.budgetApp = budgetApp;
+document.querySelector(".toolkit-btn")?.addEventListener("click", () => {
+  window.open(
+    "https://decisionfish.com/toolkit",
+    "_blank",
+    "noopener,noreferrer"
+  );
+});
+
 
   // End of the DOMContentLoaded event listener
 });
