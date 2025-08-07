@@ -28,8 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "Unexpected & Miscellaneous", emoji: "✨", defaultPct: 0.1 },
   ];
 
-  let currentRow = 0;
-
   const budgetApp = {
     selectedGoals: [],
     takeHomePay: 0,
@@ -93,7 +91,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // Step 2: Income & Expense Grid
   // =======================
 
-  // Updates category and budget progress bars and button states
+  // Focuses the next input field in the grid
+  function focusNextInput(currentRow) {
+    const allRows = [...document.querySelectorAll("#expenseGrid .expense-row")];
+    const currentIdx = allRows.indexOf(currentRow);
+    const nextRow = allRows[currentIdx + 1];
+    if (nextRow) {
+      nextRow.querySelector("select")?.focus();
+    }
+  }
+
   // Updates category and budget progress bars and button states
   function updateProgress() {
     const continueBtn = document.getElementById("continueTo2_5");
@@ -163,38 +170,10 @@ document.addEventListener("DOMContentLoaded", () => {
       ctr.appendChild(chip);
     });
   }
-
-  function tryNext(input, select, name, idx) {
-    if (input.value.trim() !== "" && select.value !== "") {
-      budgetApp.expenseState.allocations[name] = parseFloat(input.value) || 0;
-      input.classList.add("filled");
-      select.classList.add("filled");
-      updateProgress();
-
-      if (idx === currentRow && currentRow < categories.length - 1) {
-        currentRow++;
-        renderRow(currentRow);
-
-        // Slight delay avoids dropdown auto-opening in iOS Edge
-        setTimeout(() => {
-          document
-            .querySelectorAll("#expenseGrid .expense-row")
-            [currentRow]?.querySelector("select")
-            ?.focus({ preventScroll: true });
-        }, 50);
-      }
-    }
-  }
-
+  // Handles input focus and blur to manage untouched state
   function renderRow(idx) {
     const { name, emoji, defaultPct } = categories[idx];
     const container = document.getElementById("expenseGrid");
-    if (idx === 0) {
-      container.innerHTML = "";
-      const headerRow = document.getElementById("expenseHeaderRow");
-      if (headerRow) headerRow.style.display = "flex";
-    }
-
     const row = document.createElement("div");
     row.className = "expense-row";
     row.dataset.category = name;
@@ -223,14 +202,6 @@ document.addEventListener("DOMContentLoaded", () => {
       select.appendChild(opt);
     });
     select.classList.add("untouched");
-    // Add styling when a value is selected
-    select.addEventListener("change", () => {
-      if (select.value.trim() !== "") {
-        select.classList.add("filled");
-      } else {
-        select.classList.remove("filled");
-      }
-    });
 
     const input = document.createElement("input");
     input.type = "number";
@@ -247,15 +218,25 @@ document.addEventListener("DOMContentLoaded", () => {
         ? `e.g. ${Math.max(0, Math.round(getRemaining()))}`
         : `e.g. ${Math.round(budgetApp.takeHomePay * defaultPct)}`;
 
-    input.addEventListener("focus", () => input.classList.remove("untouched"));
-    input.addEventListener("input", updateProgress);
+    // 🔁 Event: Select changed
+select.addEventListener("change", () => {
+  if (select.value.trim() !== "") {
+    select.classList.add("filled");
+  } else {
+    select.classList.remove("filled");
+  }
+});
 
-    select.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && select.value) {
-        e.preventDefault();
-        input.focus();
-      }
-    });
+
+select.addEventListener("keydown", (e) => {
+  if ((e.key === "Enter" || e.key === "Tab") && select.value.trim() !== "") {
+    e.preventDefault();
+    input.focus();
+  }
+});
+
+    // 🔁 Event: Dollar input changed
+    input.addEventListener("input", updateProgress);
 
     input.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
@@ -264,14 +245,52 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    input.addEventListener("blur", () => tryNext(input, select, name, idx));
+    input.addEventListener("blur", () => {
+      const val = parseFloat(input.value);
+      if (!isNaN(val)) {
+        budgetApp.expenseState.allocations[name] = val;
+        input.classList.add("filled");
+      } else {
+        input.classList.remove("filled");
+        delete budgetApp.expenseState.allocations[name];
+      }
+      updateProgress();
+
+      // only move forward if both select and input filled
+      if (select.value && input.value.trim() !== "") {
+        focusNextSelect(row);
+      }
+    });
+
+    input.addEventListener("focus", () => input.classList.remove("untouched"));
+    select.addEventListener("focus", () =>
+      select.classList.remove("untouched")
+    );
 
     const inputGroup = document.createElement("div");
     inputGroup.className = "input-group";
     inputGroup.append(select, input);
     row.append(label, inputGroup);
     container.appendChild(row);
+
+    // ✅ Focus first select on first row
+    if (idx === 0) {
+      select.focus();
+    }
   }
+// Focuses the next select element in the grid
+function focusNextSelect(currentRow) {
+  const allRows = [...document.querySelectorAll("#expenseGrid .expense-row")];
+  const currentIdx = allRows.indexOf(currentRow);
+  const nextRow = allRows[currentIdx + 1];
+
+  if (nextRow) {
+    nextRow.querySelector("select")?.focus();
+  } else {
+    document.getElementById("continueTo2_5")?.focus();
+  }
+}
+
 
   const takeHomePayInput = document.getElementById("takeHomePayInput");
   takeHomePayInput.classList.add("untouched");
@@ -284,22 +303,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const pay = parseFloat(this.value);
     if (!isNaN(pay) && pay >= 0) {
       budgetApp.takeHomePay = pay;
-      currentRow = 0;
       document.getElementById("progressBars").classList.add("visible");
-      renderRow(currentRow);
+
+      // Render all rows at once
+      const container = document.getElementById("expenseGrid");
+      container.innerHTML = ""; // 🧹 clear old rows first
+      categories.forEach((_, idx) => renderRow(idx));
       updateProgress();
-      const firstRow = document.querySelector("#expenseGrid .expense-row");
-      if (firstRow) {
-        const select = firstRow.querySelector("select");
-        if (select) select.focus();
-      }
     }
     if (this.value.trim() !== "") {
       takeHomePayInput.classList.add("filled");
     }
   });
 
-  // Add event listener for the input field to pupdate progress
+  // Add event listener for the input field to update progress
   takeHomePayInput.addEventListener("input", () => {
     const pay = parseFloat(takeHomePayInput.value);
     if (!isNaN(pay) && pay >= 0) {
@@ -660,7 +677,6 @@ document.addEventListener("DOMContentLoaded", () => {
           takeHomePayInput.value = data.takeHomePay;
           takeHomePayInput.classList.add("filled"); // Load allocations and values
           budgetApp.expenseState.allocations = data.allocations;
-          currentRow = 0;
           document.getElementById("progressBars").classList.add("visible");
 
           // Render all rows first
