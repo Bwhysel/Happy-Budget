@@ -590,7 +590,7 @@ progress {
 /* Set default button width and alignment globally */
 button,
 .toolkit-btn {
-  min-width: 160px;
+  min-width: 150px;
   text-align: center;
 }
 

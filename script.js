@@ -336,9 +336,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  document.getElementById("backTo1").addEventListener("click", () => {
-    budgetApp.goToStep(1);
-  });
+  const backTo1Btn = document.getElementById("backTo1");
+  if (backTo1Btn) {
+    backTo1Btn.addEventListener("click", () => {
+      budgetApp.goToStep(1);
+    });
+  }
 
   document
     .getElementById("continueButtonSavings")
@@ -577,9 +580,11 @@ document.addEventListener("DOMContentLoaded", () => {
   document
     .getElementById("continueTo2_5")
     .addEventListener("click", () => budgetApp.goToStep(3));
+
   document
     .getElementById("backTo2From3")
-    .addEventListener("click", () => budgetApp.goToStep(2));
+    ?.addEventListener("click", () => budgetApp.goToStep(2));
+
   document.getElementById("continueTo4").addEventListener("click", () => {
     budgetApp.goToStep(4);
     renderStep4Summary();
@@ -682,8 +687,11 @@ document.addEventListener("DOMContentLoaded", () => {
           takeHomePayInput.value = data.takeHomePay;
           takeHomePayInput.classList.add("filled"); // Load allocations and values
           const reminder = document.getElementById("valuesReminder");
-          reminder.style.display = "block";
-          setTimeout(() => reminder.classList.add("show"), 10);
+          if (reminder) {
+            reminder.style.display = "block";
+            setTimeout(() => reminder.classList.add("show"), 10);
+          }
+
           budgetApp.expenseState.allocations = data.allocations;
           document.getElementById("progressBars").classList.add("visible");
 
@@ -750,31 +758,39 @@ document.addEventListener("DOMContentLoaded", () => {
       reader.readAsText(file);
     });
   // Add print, save, and load button event listeners
-  document.getElementById("printBudgetBtn")?.addEventListener("click", () => {
-    window.print();
-  });
+  const printBtn = document.getElementById("printBudgetBtn");
+  if (printBtn) {
+    printBtn.addEventListener("click", () => {
+      window.print();
+    });
+  }
 
-  document
-    .getElementById("saveBudgetBtn")
-    ?.addEventListener("click", saveFinalData);
+  const saveBtn = document.getElementById("saveBudgetBtn");
+  if (saveBtn) {
+    saveBtn.addEventListener("click", saveFinalData);
+  }
 
-  document.getElementById("loadBudgetBtn")?.addEventListener("click", () => {
-    document.getElementById("loadBudgetInput").click();
-  });
+  const loadBtn = document.getElementById("loadBudgetBtn");
+  const loadInput = document.getElementById("loadBudgetInput");
+
+  if (loadBtn && loadInput) {
+    loadBtn.addEventListener("click", () => {
+      loadInput.click();
+    });
+  }
 
   document.getElementById("commitmentText")?.addEventListener("input", (e) => {
     budgetApp.commitment = e.target.value;
   });
 
   window.budgetApp = budgetApp;
-document.querySelector(".toolkit-btn")?.addEventListener("click", () => {
-  window.open(
-    "https://decisionfish.com/toolkit",
-    "_blank",
-    "noopener,noreferrer"
-  );
-});
-
+  document.querySelector(".toolkit-btn")?.addEventListener("click", () => {
+    window.open(
+      "https://decisionfish.com/toolkit",
+      "_blank",
+      "noopener,noreferrer"
+    );
+  });
 
   // End of the DOMContentLoaded event listener
 });
