@@ -219,21 +219,23 @@ document.addEventListener("DOMContentLoaded", () => {
         : `e.g. ${Math.round(budgetApp.takeHomePay * defaultPct)}`;
 
     // 🔁 Event: Select changed
-select.addEventListener("change", () => {
-  if (select.value.trim() !== "") {
-    select.classList.add("filled");
-  } else {
-    select.classList.remove("filled");
-  }
-});
+    select.addEventListener("change", () => {
+      if (select.value.trim() !== "") {
+        select.classList.add("filled");
+      } else {
+        select.classList.remove("filled");
+      }
+    });
 
-
-select.addEventListener("keydown", (e) => {
-  if ((e.key === "Enter" || e.key === "Tab") && select.value.trim() !== "") {
-    e.preventDefault();
-    input.focus();
-  }
-});
+    select.addEventListener("keydown", (e) => {
+      if (
+        (e.key === "Enter" || e.key === "Tab") &&
+        select.value.trim() !== ""
+      ) {
+        e.preventDefault();
+        input.focus();
+      }
+    });
 
     // 🔁 Event: Dollar input changed
     input.addEventListener("input", updateProgress);
@@ -278,19 +280,18 @@ select.addEventListener("keydown", (e) => {
       select.focus();
     }
   }
-// Focuses the next select element in the grid
-function focusNextSelect(currentRow) {
-  const allRows = [...document.querySelectorAll("#expenseGrid .expense-row")];
-  const currentIdx = allRows.indexOf(currentRow);
-  const nextRow = allRows[currentIdx + 1];
+  // Focuses the next select element in the grid
+  function focusNextSelect(currentRow) {
+    const allRows = [...document.querySelectorAll("#expenseGrid .expense-row")];
+    const currentIdx = allRows.indexOf(currentRow);
+    const nextRow = allRows[currentIdx + 1];
 
-  if (nextRow) {
-    nextRow.querySelector("select")?.focus();
-  } else {
-    document.getElementById("continueTo2_5")?.focus();
+    if (nextRow) {
+      nextRow.querySelector("select")?.focus();
+    } else {
+      document.getElementById("continueTo2_5")?.focus();
+    }
   }
-}
-
 
   const takeHomePayInput = document.getElementById("takeHomePayInput");
   takeHomePayInput.classList.add("untouched");
@@ -305,16 +306,21 @@ function focusNextSelect(currentRow) {
       budgetApp.takeHomePay = pay;
       document.getElementById("progressBars").classList.add("visible");
 
-      // Render all rows at once
       const container = document.getElementById("expenseGrid");
-      container.innerHTML = ""; // 🧹 clear old rows first
+      container.innerHTML = "";
       categories.forEach((_, idx) => renderRow(idx));
       updateProgress();
+
+      // 👉 Show the reflection reminder
+      const reminder = document.getElementById("valuesReminder");
+      reminder.style.display = "block";
+      setTimeout(() => reminder.classList.add("show"), 10);
     }
     if (this.value.trim() !== "") {
       takeHomePayInput.classList.add("filled");
     }
   });
+
 
   // Add event listener for the input field to update progress
   takeHomePayInput.addEventListener("input", () => {

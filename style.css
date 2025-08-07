@@ -201,6 +201,13 @@ button.secondary:hover {
     white-space: nowrap;
   }
 }
+#valuesReminder {
+  opacity: 0;
+  transition: opacity 0.5s ease-in;
+}
+#valuesReminder.show {
+  opacity: 1;
+}
 
 #feedbackSection {
   margin-top: 2em;
@@ -240,10 +247,25 @@ button.secondary:hover {
 }
 
 .hint-text {
-  font-style: italic;
   font-size: 0.9em;
   color: #444;
 }
+.values-quote {
+  background: #f0f4f8;
+  border-left: 4px solid #90caf9;
+  padding: 1em 1.25em;
+  margin: 1.5em 0;
+  font-size: 0.95em;
+  color: #333;
+  border-radius: 6px;
+  opacity: 0;
+  transition: opacity 0.6s ease-in;
+}
+
+.values-quote.show {
+  opacity: 1;
+}
+
 
 /* Progress Bars Container */
 #progressBars {
