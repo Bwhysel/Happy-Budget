@@ -57,9 +57,7 @@
           ></textarea>
         </div>
         <div class="nav-buttons">
-          <button id="loadBudgetBtn">
-            Load Saved Budget 📂
-          </button>
+          <button id="loadBudgetBtn">Load Saved Budget 📂</button>
           <button id="continueButtonSavings" disabled>Continue</button>
         </div>
         <input
@@ -211,10 +209,21 @@
               </table>
             </div>
           </section>
-          <p>
-            You said working with this Happy Budget<sup>®</sup> makes you feel:
-            <span id="happinessEmoji" style="font-size: 1.5em"></span>
-          </p>
+<blockquote class="values-quote show" id="emojiFeedbackQuote">
+  You said working with this Happy Budget<sup>®</sup> makes you feel: 
+  <span id="happinessEmoji" style="font-size: 1.5em"></span>
+</blockquote>
+
+<section id="nextSteps" class="share-instructions">
+  <h3>🔮 What’s Next?</h3>
+  <p>You’ve made your plan—now choose how to track your spending:</p>
+  <ul>
+    <li><a href="https://medium.com/@karensnow137/how-to-track-your-spending-using-pen-and-paper-df8c3094bc2c" target="_blank" rel="noopener">Track by hand</a> for a mindful, low-tech approach</li>
+    <li><a href="https://www.kiplinger.com/personal-finance/how-to-save-money/best-budgeting-apps" target="_blank" rel="noopener">Compare apps for beginners</a> like Simplifi, Monarch, and more</li>
+  </ul>
+</section>
+
+
           <section id="commitmentSection">
             <h3>✍️ Your Commitment</h3>
             <p>Take a moment to plan your next steps:</p>
@@ -259,10 +268,8 @@
         </div>
 
         <div class="action-buttons">
-          <button onclick="budgetApp.goToStep(3)">
-            Back
-          </button>
-          <button type="button" class="save-btn">Save Data</button>
+          <button onclick="budgetApp.goToStep(3)">Back</button>
+          <button type="button" id="saveBudgetBtn" class="save-btn">Save Data</button>
           <button type="button" class="print-btn">Print</button>
           <button type="button" class="toolkit-btn">
             Toolkit

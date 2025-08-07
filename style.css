@@ -286,6 +286,11 @@ progress.negative::-webkit-progress-bar {
   transform: scale(1.2);
   text-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
 }
+.emoji-feedback {
+  margin: 1em 0;
+  font-size: 1.1em;
+  color: #333;
+}
 
 .hint-text {
   font-size: 0.9em;
