@@ -1,7 +1,6 @@
 body {
   font-family: "Roboto", Arial, sans-serif;
   padding: 1em;
-  max-width: 700px;
   margin: auto;
   line-height: 1.5;
 }
@@ -31,10 +30,11 @@ body {
 }
 
 .expense-header-row label {
-  min-width: 160px;
-  flex: 2;
+  flex-basis: 30%;
+  min-width: 180px;
+  max-width: 260px;
+  flex-shrink: 0;
 }
-
 .expense-header-row .input-group {
   flex: 3;
   display: flex;
@@ -48,8 +48,10 @@ body {
 }
 
 .expense-row label {
-  min-width: 160px;
-  flex: 2;
+  flex-basis: 30%;
+  min-width: 180px;
+  max-width: 260px;
+  flex-shrink: 0;
 }
 
 .expense-row select,
@@ -515,21 +517,21 @@ progress {
   visibility: hidden;
   opacity: 0;
   position: absolute;
-  top: 125%; /* space below the icon */
-  left: 50%;
-  transform: translateX(-50%);
+  top: 100%;
+  left: 0;
+  right: auto;
   background-color: rgba(0, 0, 0, 0.9);
   color: #fff;
   padding: 0.75em;
   border-radius: 6px;
   pointer-events: none;
   transition: opacity 0.2s ease;
-  z-index: 10;
-  max-width: 90vw;
+  z-index: 1000;
   width: max-content;
+  max-width: 90vw;
   white-space: normal;
-  text-align: left;
   box-sizing: border-box;
+  text-align: left;
 }
 
 /* also show on hover */
@@ -587,6 +589,12 @@ button,
 
 /* Mobile stacking and full width */
 @media (max-width: 768px) {
+  /* Mobile: body spans full width */
+  body {
+    margin: 0;
+  }
+
+  /* Stack rows into one column */
   .expense-row,
   .expense-header-row {
     flex-direction: column;
@@ -594,67 +602,37 @@ button,
     gap: 0.75em;
   }
 
+  /* Full-width labels */
   .expense-row label {
     width: 100%;
     margin-bottom: 0.25em;
   }
 
+  /* Stack inputs neatly */
   .input-group {
+    display: flex;
     flex-direction: column;
+    gap: 0.5em;
     width: 100%;
   }
 
-  @media (max-width: 768px) {
-    .expense-row,
-    .expense-header-row {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 0.75em;
-    }
-
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5em;
-      width: 100%;
-    }
-
-    .input-group select,
-    .input-group input {
-      width: 100%;
-      max-width: none;
-      min-height: 44px;
-      padding: 0.5em;
-      font-size: 1rem;
-      line-height: 1.2;
-      box-sizing: border-box;
-    }
-
-    /* Remove duplicate styles here */
-    button,
-    .toolkit-btn,
-    .action-buttons button,
-    .action-buttons .toolkit-btn {
-      width: 100%;
-      max-width: 260px;
-      margin: 0 auto;
-      min-height: 44px;
-      padding: 0.5em;
-    }
-
-    .emoji-rating span {
-      font-size: 2.2rem;
-    }
-  }
-
+  /* Make all form controls tap-friendly */
+  .input-group select,
+  .input-group input,
   input[type="number"],
   select,
   textarea,
   button {
+    width: 100%;
+    max-width: none;
     padding: 0.5em;
     min-height: 44px;
+    font-size: 1rem;
+    line-height: 1.2;
+    box-sizing: border-box;
   }
 
+  /* Full-width action buttons */
   button,
   .toolkit-btn,
   .action-buttons button,
@@ -664,10 +642,12 @@ button,
     margin: 0 auto;
   }
 
+  /* Larger emoji taps */
   .emoji-rating span {
     font-size: 2.2rem;
   }
 }
+
 
 /* Optional: hide on very small screens */
 @media (max-width: 400px) {
