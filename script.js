@@ -293,19 +293,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const currentIdx = allRows.indexOf(currentRow);
     const nextRow = allRows[currentIdx + 1];
 
-if (nextRow) {
-  const nextSelect = nextRow.querySelector("select");
-  if (window.innerWidth > 768) {
-    // On desktop, move focus to the next select
-    nextSelect?.focus();
-  } else {
-    // On mobile, scroll the next select into view without opening it
-    nextSelect?.scrollIntoView({ behavior: "smooth", block: "center" });
-  }
-} else {
-  document.getElementById("continueTo2_5")?.focus();
-}
-
+    if (nextRow) {
+      const nextSelect = nextRow.querySelector("select");
+      if (window.innerWidth > 768) {
+        // On desktop, move focus to the next select
+        nextSelect?.focus();
+      } else {
+        // On mobile, scroll the next select into view without opening it
+        nextSelect?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    } else {
+      document.getElementById("continueTo2_5")?.focus();
+    }
   }
 
   const takeHomePayInput = document.getElementById("takeHomePayInput");

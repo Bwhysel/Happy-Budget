@@ -22,24 +22,6 @@ body {
   gap: 1em;
   align-items: center;
 }
-.expense-header-row {
-  display: flex;
-  align-items: center;
-  gap: 1em;
-  margin-bottom: 0.5em;
-}
-
-.expense-header-row label {
-  flex-basis: 30%;
-  min-width: 180px;
-  max-width: 260px;
-  flex-shrink: 0;
-}
-.expense-header-row .input-group {
-  flex: 3;
-  display: flex;
-  gap: 1em;
-}
 
 .input-group {
   flex: 3;
@@ -50,14 +32,14 @@ body {
 .expense-row label {
   flex-basis: 30%;
   min-width: 180px;
-  max-width: 260px;
+  max-width: 460px; /* first column width*/
   flex-shrink: 0;
 }
 
 .expense-row select,
 .expense-row input {
   flex: 1;
-  min-width: 120px;
+  min-width: 90px; /*2nd and 3rd column width*/
   padding: 0.3em;
 }
 input[type="number"] {
@@ -203,24 +185,6 @@ progress.negative::-webkit-progress-bar {
     align-items: center;
     padding: 1em;
     margin: 0.5em -0.5em 0;
-  }
-  .expense-header-row {
-    flex-wrap: wrap;
-  }
-
-  .expense-header-row label:first-child {
-    flex-basis: 100%;
-  }
-
-  .expense-header-row .input-group {
-    flex-wrap: nowrap;
-    width: 100%;
-    gap: 1em;
-  }
-
-  .expense-header-row .input-group label {
-    flex: 1;
-    white-space: nowrap;
   }
 }
 #valuesReminder {
@@ -595,8 +559,7 @@ button,
   }
 
   /* Stack rows into one column */
-  .expense-row,
-  .expense-header-row {
+.expense-row {
     flex-direction: column;
     align-items: stretch;
     gap: 0.75em;
@@ -647,7 +610,6 @@ button,
     font-size: 2.2rem;
   }
 }
-
 
 /* Optional: hide on very small screens */
 @media (max-width: 400px) {
