@@ -61,8 +61,8 @@ body {
 input[type="number"] {
   text-align: right;
   padding: 0.3em 0.75em; /* smaller padding */
-  height: auto;           /* allow shrinking */
-  min-height: auto;       /* override mobile value */
+  height: auto; /* allow shrinking */
+  min-height: auto; /* override mobile value */
 }
 .expense-row input.untouched,
 .expense-row select.untouched {
@@ -276,15 +276,18 @@ progress.negative::-webkit-progress-bar {
   color: #444;
 }
 .values-quote {
-  background: #f0f4f8;
-  border-left: 4px solid #90caf9;
-  padding: 1em 1.25em;
-  margin: 1.5em 0;
-  font-size: 0.95em;
-  color: #333;
+  text-align: center;
+  font-size: 1.1rem;
+  margin: 1.5em auto;
+  padding: 0.5em 1em;
+  border-left: 4px solid var(--accent-color, #2f3a92);
+  background: #f9f9f9;
   border-radius: 6px;
-  opacity: 0;
-  transition: opacity 0.6s ease-in;
+}
+
+#happinessEmoji {
+  font-size: 1.6em;
+  margin-left: 0.25em;
 }
 
 .values-quote.show {
@@ -358,14 +361,38 @@ progress {
 }
 
 /* Step 3 Styles */
-#reflectionBox textarea {
-  width: 100%;
+#goalReflection,
+#commitmentText {
+  font-family: "Patrick Hand", cursive;
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #2c3e50; /* Dark blue felt-tip color */
+  line-height: 1.6;
   padding: 0.5em;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 6px;
   resize: vertical;
-  min-height: 100px;
+  width: 100%;
+  box-sizing: border-box;
+  background: #fff;
 }
+
+#goalTextDisplay,
+#commitmentDisplay {
+  font-family: "Patrick Hand", cursive;
+  font-size: 1.2rem; /* Standardized size */
+  font-weight: 400;
+  color: #2c3e50; /* Dark blue felt-tip color */
+  line-height: 1.6;
+  padding: 0.5em;
+  margin: 1em auto;
+  text-align: center;
+  white-space: pre-wrap;
+  box-sizing: border-box;
+  background: #fff;
+  border-radius: 6px;
+}
+
 #valueChart {
   margin-top: 2em;
   font-size: 1.1em;
@@ -383,16 +410,6 @@ progress {
 }
 
 /* Step 4 styles */
-#commitmentText {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 1em;
-  margin: 1em 0;
-  font-size: 1.1em;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
 
 /* Step 4 Summary Styles */
 #budgetSummary {
@@ -411,6 +428,13 @@ progress {
   margin-bottom: 1em;
   color: #2c3e50;
   font-size: 1.2em;
+}
+.goal-text-display {
+  font-size: 1.4rem;
+  text-align: center;
+  font-style: normal;
+  margin: 1em auto;
+  padding: 0.5em 1em;
 }
 
 #selectedGoalsList {
@@ -579,50 +603,48 @@ button,
     width: 100%;
   }
 
-@media (max-width: 768px) {
-  .expense-row,
-  .expense-header-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.75em;
+  @media (max-width: 768px) {
+    .expense-row,
+    .expense-header-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75em;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5em;
+      width: 100%;
+    }
+
+    .input-group select,
+    .input-group input {
+      width: 100%;
+      max-width: none;
+      min-height: 44px;
+      padding: 0.5em;
+      font-size: 1rem;
+      line-height: 1.2;
+      box-sizing: border-box;
+    }
+
+    /* Remove duplicate styles here */
+    button,
+    .toolkit-btn,
+    .action-buttons button,
+    .action-buttons .toolkit-btn {
+      width: 100%;
+      max-width: 260px;
+      margin: 0 auto;
+      min-height: 44px;
+      padding: 0.5em;
+    }
+
+    .emoji-rating span {
+      font-size: 2.2rem;
+    }
   }
-
-  .input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5em;
-    width: 100%;
-  }
-
-  .input-group select,
-  .input-group input {
-    width: 100%;
-    max-width: none;
-    min-height: 44px;
-    padding: 0.5em;
-    font-size: 1rem;
-    line-height: 1.2;
-    box-sizing: border-box;
-  }
-
-  /* Remove duplicate styles here */
-  button,
-  .toolkit-btn,
-  .action-buttons button,
-  .action-buttons .toolkit-btn {
-    width: 100%;
-    max-width: 260px;
-    margin: 0 auto;
-    min-height: 44px;
-    padding: 0.5em;
-  }
-
-  .emoji-rating span {
-    font-size: 2.2rem;
-  }
-}
-
-
 
   input[type="number"],
   select,
@@ -645,7 +667,6 @@ button,
     font-size: 2.2rem;
   }
 }
-
 
 /* Optional: hide on very small screens */
 @media (max-width: 400px) {

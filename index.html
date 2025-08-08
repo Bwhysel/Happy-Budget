@@ -3,6 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+
     <title>Happy Budget® for Your Best Life</title>
     <link rel="stylesheet" href="style.css" />
     <link
@@ -21,14 +24,16 @@
         <div class="step-segment" data-step="4"></div>
       </div>
       <h1>😁 Create Your Happy Budget<sup>®</sup></h1>
-<div id="introMessage" class="intro-message" aria-live="polite">
-  <p>
-    A Happy Budget is a kind and doable plan for spending and saving that respects your needs and supports your happiness.
-  </p>
-  <p>
-    🔐 Your budget stays private! Nothing is saved or shared unless you choose to.
-  </p>
-</div>
+      <div id="introMessage" class="intro-message" aria-live="polite">
+        <p>
+          A Happy Budget is a kind and doable plan for spending and saving that
+          respects your needs and supports your happiness.
+        </p>
+        <p>
+          🔐 Your budget stays private! Nothing is saved or shared unless you
+          choose to.
+        </p>
+      </div>
 
       <div id="step1" class="step active">
         <h2>1. Set Your Savings Goals</h2>
@@ -73,13 +78,14 @@
         <h2>2. Enter Your Income, Values, and Spending Plans</h2>
         <div class="expense-row">
           <label for="takeHomePayInput">
-  Take-home pay, after taxes:
-  <span class="tooltip-container">ℹ️
-    <span class="tooltip-text">
-      This is the total each month you get after taxes and deductions.
-    </span>
-  </span>
-</label>
+            Take-home pay, after taxes:
+            <span class="tooltip-container"
+              >ℹ️
+              <span class="tooltip-text">
+                This is the total each month you get after taxes and deductions.
+              </span>
+            </span>
+          </label>
 
           <div class="input-group">
             <input
@@ -216,20 +222,35 @@
               </table>
             </div>
           </section>
-<blockquote class="values-quote show" id="emojiFeedbackQuote">
-  You said working with this Happy Budget<sup>®</sup> makes you feel: 
-  <span id="happinessEmoji" style="font-size: 1.5em"></span>
-</blockquote>
+          <blockquote class="values-quote show" id="emojiFeedbackQuote">
+            You said working with this Happy Budget<sup>®</sup> makes you feel:
+            <span id="happinessEmoji" style="font-size: 1.5em"></span>
+          </blockquote>
 
-<section id="nextSteps" class="share-instructions">
-  <h3>🔮 What’s Next?</h3>
-  <p>You’ve made your plan—now choose how to track your spending:</p>
-  <ul>
-    <li><a href="https://medium.com/@karensnow137/how-to-track-your-spending-using-pen-and-paper-df8c3094bc2c" target="_blank" rel="noopener">Track by hand</a> for a mindful, low-tech approach</li>
-    <li><a href="https://www.kiplinger.com/personal-finance/how-to-save-money/best-budgeting-apps" target="_blank" rel="noopener">Compare apps for beginners</a> like Simplifi, Monarch, and more</li>
-  </ul>
-</section>
-
+          <section id="nextSteps" class="share-instructions">
+            <h3>🔮 What’s Next?</h3>
+            <p>You’ve made your plan—now choose how to track your spending:</p>
+            <ul>
+              <li>
+                <a
+                  href="https://medium.com/@karensnow137/how-to-track-your-spending-using-pen-and-paper-df8c3094bc2c"
+                  target="_blank"
+                  rel="noopener"
+                  >Track by hand</a
+                >
+                for a mindful, low-tech approach
+              </li>
+              <li>
+                <a
+                  href="https://www.kiplinger.com/personal-finance/how-to-save-money/best-budgeting-apps"
+                  target="_blank"
+                  rel="noopener"
+                  >Compare apps for beginners</a
+                >
+                like Simplifi, Monarch, and more
+              </li>
+            </ul>
+          </section>
 
           <section id="commitmentSection">
             <h3>✍️ Your Commitment</h3>
@@ -276,8 +297,10 @@
 
         <div class="action-buttons">
           <button onclick="budgetApp.goToStep(3)">Back</button>
-          <button type="button" id="saveBudgetBtn" class="save-btn">Save Data</button>
-          <button type="button" class="print-btn">Print</button>
+          <button type="button" id="saveBudgetBtn" class="save-btn">
+            Save Data
+          </button>
+          <button type="button" id="printBudgetBtn" class="print-btn">Print</button>
           <button type="button" class="toolkit-btn">
             Toolkit
             <span style="font-size: 0.8em; vertical-align: middle">🔗</span>
