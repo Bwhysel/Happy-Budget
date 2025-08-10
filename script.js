@@ -27,6 +27,19 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "Children & Pets", emoji: "👶", defaultPct: 0.05 },
     { name: "Unexpected & Miscellaneous", emoji: "✨", defaultPct: 0.1 },
   ];
+  const personalValues = [
+    "Autonomy",
+    "Basic Needs",
+    "Empowerment",
+    "Financial Security",
+    "Fun & Leisure",
+    "Giving & Helping Others",
+    "Health",
+    "Learning",
+    "None",
+    "Respect",
+    "Social Connectedness",
+  ];
   // Safely set a property (like textContent or value) on an element, if it exists
   function safeSet(id, prop, value) {
     const el = document.getElementById(id);
@@ -190,19 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const select = document.createElement("select");
     select.innerHTML = '<option value="">Why this matters...</option>';
-    [
-      "Autonomy",
-      "Basic Needs",
-      "Empowerment",
-      "Financial Security",
-      "Fun & Leisure",
-      "Giving & Helping Others",
-      "Health",
-      "Learning",
-      "None",
-      "Respect",
-      "Social Connectedness",
-    ].forEach((val) => {
+    personalValues.forEach((val) => {
       const opt = document.createElement("option");
       opt.value = val;
       opt.textContent = val;
