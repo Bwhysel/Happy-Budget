@@ -285,7 +285,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ✅ Focus first select on first row
     if (idx === 0) {
-      select.focus();
+      // Desktop: move focus to the first select for faster entry.
+      // Mobile: only scroll into view to avoid auto‑opening the picker.
+      if (window.innerWidth > 768) {
+        select.focus();
+      } else {
+        select.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
     }
   }
   // Focuses the next select element in the grid
