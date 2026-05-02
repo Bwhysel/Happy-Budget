@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
       getTotal() {
         return Object.values(this.allocations).reduce(
           (sum, val) => sum + (parseFloat(val) || 0),
-          0
+          0,
         );
       },
     },
@@ -117,6 +117,26 @@ document.addEventListener("DOMContentLoaded", () => {
   function getRemaining() {
     return budgetApp.takeHomePay - budgetApp.expenseState.getTotal();
   }
+
+  function getPlaceholder(categoryName, defaultPct = 0) {
+    if (categoryName === "Unexpected & Miscellaneous") {
+      return `e.g. ${Math.max(0, Math.round(getRemaining()))}`;
+    }
+    return `e.g. ${Math.round(budgetApp.takeHomePay * defaultPct)}`;
+  }
+
+  function updateExpensePlaceholders() {
+    const rows = document.querySelectorAll("#expenseGrid .expense-row");
+    rows.forEach((row) => {
+      const categoryName = row.dataset.category;
+      const input = row.querySelector("input");
+      const category = categories.find((c) => c.name === categoryName);
+
+      if (input && category) {
+        input.placeholder = getPlaceholder(category.name, category.defaultPct);
+      }
+    });
+  }
   // =======================
   // Step 2: Income & Expense Grid
   // =======================
@@ -130,22 +150,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const bp = document.getElementById("budgetProgress");
     if (remaining < 0) {
       bp.classList.add("negative");
-      document.getElementById(
-        "remainingLabel"
-      ).innerHTML = `<span class="overspent-label">⚠️ ($${Math.abs(
-        Math.round(remaining)
-      ).toLocaleString()} overspent)</span>`;
+      document.getElementById("remainingLabel").innerHTML =
+        `<span class="overspent-label">⚠️ ($${Math.abs(
+          Math.round(remaining),
+        ).toLocaleString()} overspent)</span>`;
     } else {
       bp.classList.remove("negative");
       document.getElementById("remainingLabel").textContent = `($${Math.max(
         0,
-        Math.round(remaining)
+        Math.round(remaining),
       ).toLocaleString()} remaining)`;
     }
 
     bp.value = Math.min(
       100,
-      Math.round((totalAlloc / budgetApp.takeHomePay) * 100)
+      Math.round((totalAlloc / budgetApp.takeHomePay) * 100),
     );
 
     const rows = document.querySelectorAll("#expenseGrid .expense-row");
@@ -164,10 +183,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //update the final placeholder for unexpected expenses
     const lastInput = document.querySelector(
-      '.expense-row[data-category="Unexpected & Miscellaneous"] input'
+      '.expense-row[data-category="Unexpected & Miscellaneous"] input',
     );
     if (lastInput) {
-      lastInput.placeholder = `e.g. ${Math.round(getRemaining())}`;
+      lastInput.placeholder = getPlaceholder("Unexpected & Miscellaneous");
     }
   }
 
@@ -221,10 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
       input.id = "unexpectedInput";
     }
 
-    input.placeholder =
-      name === "Unexpected & Miscellaneous"
-        ? `e.g. ${Math.max(0, Math.round(getRemaining()))}`
-        : `e.g. ${Math.round(budgetApp.takeHomePay * defaultPct)}`;
+    input.placeholder = getPlaceholder(name, defaultPct);
 
     // 🔁 Event: Select changed
     select.addEventListener("change", () => {
@@ -274,7 +290,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     input.addEventListener("focus", () => input.classList.remove("untouched"));
     select.addEventListener("focus", () =>
-      select.classList.remove("untouched")
+      select.classList.remove("untouched"),
     );
 
     const inputGroup = document.createElement("div");
@@ -328,8 +344,11 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("progressBars").classList.add("visible");
 
       const container = document.getElementById("expenseGrid");
-      container.innerHTML = "";
-      categories.forEach((_, idx) => renderRow(idx));
+      if (container.children.length === 0) {
+        categories.forEach((_, idx) => renderRow(idx));
+      } else {
+        updateExpensePlaceholders();
+      }
       updateProgress();
 
       // 👉 Show the reflection reminder
@@ -479,20 +498,20 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("savingsFeedback").textContent =
       savingsPct < 10
         ? `⚠️ You're saving just ${Math.round(
-            savingsPct
+            savingsPct,
           )}% of your take-home pay. Your savings goals include ${savingsGoals}. Would you like to revisit your budget to save a bit more and reach your goals sooner?`
         : `🎉 Great job saving ${Math.round(
-            savingsPct
+            savingsPct,
           )}% of your take-home pay! Your savings goals include ${savingsGoals}. Would you still like to revisit your budget to save a bit more and reach your goals sooner?`;
 
     const housingPct = (housing / takeHome) * 100;
     document.getElementById("housingFeedback").textContent =
       housingPct > 35
         ? `⚠️ Housing takes up ${Math.round(
-            housingPct
+            housingPct,
           )}% of your income. Is this sustainable? Can you reduce housing costs or increase income?`
         : `💡 Housing is ${Math.round(
-            housingPct
+            housingPct,
           )}% of income. That looks reasonable.`;
 
     const used = new Set();
@@ -522,7 +541,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Visually selects the emoji rating and updates UI feedback
   function setEmojiRating(idx) {
     const emojis = document.querySelectorAll(
-      "#satisfactionCheck .emoji-rating span"
+      "#satisfactionCheck .emoji-rating span",
     );
     emojis.forEach((e) => e.classList.remove("active"));
     emojis[idx]?.classList.add("active");
@@ -658,7 +677,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Find associated value
       const row = document.querySelector(
-        `.expense-row[data-category="${name}"]`
+        `.expense-row[data-category="${name}"]`,
       );
       const value = row ? row.querySelector("select")?.value || "None" : "None";
 
@@ -673,9 +692,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Update total
-    document.getElementById(
-      "totalMonthlyBudget"
-    ).textContent = `$${totalMonthly.toLocaleString()}`;
+    document.getElementById("totalMonthlyBudget").textContent =
+      `$${totalMonthly.toLocaleString()}`;
   }
 
   document
@@ -788,7 +806,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (err) {
           console.error("Error loading budget:", err);
           alert(
-            "Error loading budget file. Please make sure you selected a valid Happy Budget file."
+            "Error loading budget file. Please make sure you selected a valid Happy Budget file.",
           );
         }
       };
@@ -825,7 +843,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.open(
       "https://decisionfish.com/toolkit",
       "_blank",
-      "noopener,noreferrer"
+      "noopener,noreferrer",
     );
   });
   document.getElementById("printButton")?.addEventListener("click", () => {
