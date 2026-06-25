@@ -12,6 +12,21 @@
       rel="stylesheet"
     />
 
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-03STFKG8WS"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-03STFKG8WS");
+    </script>
+
     <title>Happy Budget® for Your Best Life</title>
     <link rel="stylesheet" href="style.css?v=20250810" />
     <link
@@ -290,7 +305,27 @@
             <span style="font-size: 0.8em; vertical-align: middle">🔗</span>
           </button>
         </div>
+
+        <footer class="copyright-note">
+          © <span id="copyrightYear"></span> Decision Fish LLC ·
+          <a href="https://www.decisionfish.com" target="_blank" rel="noopener">
+            www.decisionfish.com
+          </a>
+          ·
+          <a
+            href="https://decisionfish.com/terms-of-use/"
+            target="_blank"
+            rel="noopener"
+          >
+            Terms of Use
+          </a>
+        </footer>
       </div>
+
+      <script>
+        document.getElementById("copyrightYear").textContent =
+          new Date().getFullYear();
+      </script>
 
       <script src="script.js?v=20250810"></script>
     </main>

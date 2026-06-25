@@ -359,6 +359,17 @@ progress {
   border-radius: 6px;
 }
 
+.copyright-note {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.85em;
+  color: #6b7280;
+}
+
+.copyright-note a {
+  color: inherit;
+}
+
 #valueChart {
   margin-top: 2em;
   font-size: 1.1em;
