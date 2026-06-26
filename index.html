@@ -135,10 +135,40 @@
           </div>
         </div>
 
+        <div id="autoFillControls" class="autofill-controls" aria-live="polite">
+          <div class="autofill-action-row">
+            <button id="autoFillBtn" class="button-assist" type="button">
+              Auto-fill
+            </button>
+            <span
+              class="autofill-help"
+              id="autoFillHelpToggle"
+              role="button"
+              tabindex="0"
+              aria-controls="autoFillHelpText"
+              aria-expanded="false"
+              aria-label="Auto-fill help"
+              >?</span
+            >
+          </div>
+          <p id="autoFillHelpText" class="autofill-help-text" hidden>
+            Fills empty amounts, keeps existing entries, and may adjust
+            Unexpected & Misc to help balance.
+          </p>
+          <p id="autoFillStatus" class="autofill-status"></p>
+        </div>
+
         <!-- Navigation: back is always visible; continue is disabled until ready -->
         <div class="nav-buttons">
           <button id="backTo1">Back</button>
-          <button id="continueTo2_5" disabled>Continue</button>
+          <div class="continue-group">
+            <button id="continueTo2_5" disabled>Continue</button>
+            <p
+              id="continueReason"
+              class="continue-reason"
+              aria-live="polite"
+            ></p>
+          </div>
         </div>
       </div>
       <div id="step3" class="step">

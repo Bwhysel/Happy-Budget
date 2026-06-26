@@ -40,6 +40,9 @@ document.addEventListener("DOMContentLoaded", () => {
     "Respect",
     "Social Connectedness",
   ];
+  const unexpectedCategoryName = "Unexpected & Miscellaneous";
+  let continueReasonRequested = false;
+
   // Safely set a property (like textContent or value) on an element, if it exists
   function safeSet(id, prop, value) {
     const el = document.getElementById(id);
@@ -119,10 +122,211 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function getPlaceholder(categoryName, defaultPct = 0) {
-    if (categoryName === "Unexpected & Miscellaneous") {
+    if (categoryName === unexpectedCategoryName) {
       return `e.g. ${Math.max(0, Math.round(getRemaining()))}`;
     }
     return `e.g. ${Math.round(budgetApp.takeHomePay * defaultPct)}`;
+  }
+
+  function formatCurrency(value) {
+    return `$${Math.abs(Math.round(value)).toLocaleString()}`;
+  }
+
+  function hasValidTakeHomePay() {
+    return Number.isFinite(budgetApp.takeHomePay) && budgetApp.takeHomePay > 0;
+  }
+
+  function isRowComplete(row) {
+    const sel = row.querySelector("select");
+    const inp = row.querySelector("input");
+    return !!(sel && inp && sel.value !== "" && inp.value.trim() !== "");
+  }
+
+  function setAutoFillStatus(message) {
+    safeSet("autoFillStatus", "textContent", message || "");
+  }
+
+  function clearAutoFillStatusOnManualEdit() {
+    setAutoFillStatus("");
+  }
+
+  function setAutoFillHelpVisibility(visible) {
+    const helpText = document.getElementById("autoFillHelpText");
+    const helpToggle = document.getElementById("autoFillHelpToggle");
+    if (!helpText || !helpToggle) return;
+
+    helpText.hidden = !visible;
+    helpToggle.setAttribute("aria-expanded", visible ? "true" : "false");
+  }
+
+  function setContinueReason(remaining, completed) {
+    const continueBtn = document.getElementById("continueTo2_5");
+    const reasonEl = document.getElementById("continueReason");
+    if (!continueBtn || !reasonEl) return;
+
+    if (!continueBtn.disabled) {
+      reasonEl.textContent = "";
+      continueReasonRequested = false;
+      return;
+    }
+
+    if (!continueReasonRequested) {
+      reasonEl.textContent = "";
+      return;
+    }
+
+    const roundedRemaining = Math.round(remaining);
+    if (roundedRemaining < 0) {
+      reasonEl.textContent = `Continue is disabled: overspent by ${formatCurrency(
+        roundedRemaining,
+      )}. Reduce one or more category amounts.`;
+      return;
+    }
+
+    if (roundedRemaining > 0) {
+      reasonEl.textContent = `Continue is disabled: ${formatCurrency(
+        roundedRemaining,
+      )} still unallocated. Add this to a category to continue.`;
+      return;
+    }
+
+    const incompleteCount = categories.length - completed;
+    if (incompleteCount > 0) {
+      reasonEl.textContent = `Continue is disabled: ${incompleteCount} categories still need an amount or value.`;
+      return;
+    }
+
+    reasonEl.textContent = "";
+  }
+
+  function syncAutoFillAvailability() {
+    const controls = document.getElementById("autoFillControls");
+    const autoFillBtn = document.getElementById("autoFillBtn");
+    if (!controls || !autoFillBtn) return;
+
+    const rows = document.querySelectorAll("#expenseGrid .expense-row");
+    const isAvailable = hasValidTakeHomePay() && rows.length > 0;
+    controls.classList.toggle("visible", isAvailable);
+
+    if (!isAvailable) {
+      setAutoFillStatus("");
+      setAutoFillHelpVisibility(false);
+    }
+  }
+
+  function applyAutoFill() {
+    if (!hasValidTakeHomePay()) {
+      return;
+    }
+
+    const rows = [...document.querySelectorAll("#expenseGrid .expense-row")];
+    if (rows.length === 0) {
+      return;
+    }
+
+    let amountCount = 0;
+    let valueCount = 0;
+    let unexpectedAdjusted = false;
+    let unexpectedRow = null;
+
+    // Align allocations with current row input values before applying auto-fill.
+    rows.forEach((row) => {
+      const categoryName = row.dataset.category;
+      const input = row.querySelector("input");
+      if (!categoryName || !input) return;
+
+      const currentVal = parseFloat(input.value);
+      if (input.value.trim() !== "" && !isNaN(currentVal)) {
+        budgetApp.expenseState.allocations[categoryName] = currentVal;
+        input.classList.add("filled");
+        input.classList.remove("untouched");
+      } else {
+        delete budgetApp.expenseState.allocations[categoryName];
+      }
+    });
+
+    // First pass: fill empty non-unexpected categories and blank value selections.
+    rows.forEach((row) => {
+      const categoryName = row.dataset.category;
+      const input = row.querySelector("input");
+      const select = row.querySelector("select");
+      const category = categories.find((c) => c.name === categoryName);
+      if (!categoryName || !input || !select || !category) return;
+
+      if (categoryName === unexpectedCategoryName) {
+        unexpectedRow = row;
+      }
+
+      if (select.value.trim() === "") {
+        select.value = "None";
+        select.classList.add("filled");
+        select.classList.remove("untouched");
+        valueCount++;
+      }
+
+      if (categoryName === unexpectedCategoryName) return;
+
+      if (input.value.trim() === "") {
+        const defaultAmount = Math.round(
+          budgetApp.takeHomePay * category.defaultPct,
+        );
+        input.value = defaultAmount;
+        input.classList.add("filled");
+        input.classList.remove("untouched");
+        budgetApp.expenseState.allocations[categoryName] = defaultAmount;
+        amountCount++;
+      }
+    });
+
+    // Handle Unexpected & Miscellaneous after other categories are finalized.
+    if (unexpectedRow) {
+      const unexpectedInput = unexpectedRow.querySelector("input");
+      if (unexpectedInput) {
+        if (unexpectedInput.value.trim() === "") {
+          const fillAmount = Math.max(0, Math.round(getRemaining()));
+          unexpectedInput.value = fillAmount;
+          unexpectedInput.classList.add("filled");
+          unexpectedInput.classList.remove("untouched");
+          budgetApp.expenseState.allocations[unexpectedCategoryName] =
+            fillAmount;
+          amountCount++;
+        }
+
+        const allRowsFilled = rows.every((row) => isRowComplete(row));
+        const roundedRemaining = Math.round(getRemaining());
+
+        if (allRowsFilled && roundedRemaining !== 0) {
+          const currentUnexpected = parseFloat(unexpectedInput.value);
+          if (!isNaN(currentUnexpected)) {
+            const rebalancedUnexpected = Math.max(
+              0,
+              currentUnexpected + roundedRemaining,
+            );
+            if (rebalancedUnexpected !== currentUnexpected) {
+              unexpectedInput.value = rebalancedUnexpected;
+              budgetApp.expenseState.allocations[unexpectedCategoryName] =
+                rebalancedUnexpected;
+              unexpectedAdjusted = true;
+            }
+          }
+        }
+      }
+    }
+
+    updateProgress();
+    updateExpensePlaceholders();
+    syncAutoFillAvailability();
+
+    if (amountCount === 0 && valueCount === 0 && !unexpectedAdjusted) {
+      setAutoFillStatus("No changes made. All categories already had amounts.");
+      return;
+    }
+
+    let statusMessage = `Auto-Fill set ${valueCount} values to None and set ${amountCount} amounts to defaults.`;
+    if (unexpectedAdjusted) {
+      statusMessage += " Unexpected & Misc was adjusted to rebalance.";
+    }
+    setAutoFillStatus(statusMessage);
   }
 
   function updateExpensePlaceholders() {
@@ -162,10 +366,9 @@ document.addEventListener("DOMContentLoaded", () => {
       ).toLocaleString()} remaining)`;
     }
 
-    bp.value = Math.min(
-      100,
-      Math.round((totalAlloc / budgetApp.takeHomePay) * 100),
-    );
+    bp.value = hasValidTakeHomePay()
+      ? Math.min(100, Math.round((totalAlloc / budgetApp.takeHomePay) * 100))
+      : 0;
 
     const rows = document.querySelectorAll("#expenseGrid .expense-row");
     let completed = 0;
@@ -177,8 +380,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     document.getElementById("categoryProgress").value = completed;
     document.getElementById("categoryLabel").textContent = completed;
+    const roundedRemaining = Math.round(remaining);
     continueBtn.disabled = !(
-      remaining === 0 && completed === categories.length
+      roundedRemaining === 0 && completed === categories.length
     );
 
     //update the final placeholder for unexpected expenses
@@ -188,6 +392,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (lastInput) {
       lastInput.placeholder = getPlaceholder("Unexpected & Miscellaneous");
     }
+
+    setContinueReason(remaining, completed);
+    syncAutoFillAvailability();
   }
 
   function renderSavingsGoals() {
@@ -244,11 +451,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 🔁 Event: Select changed
     select.addEventListener("change", () => {
+      clearAutoFillStatusOnManualEdit();
       if (select.value.trim() !== "") {
         select.classList.add("filled");
       } else {
         select.classList.remove("filled");
       }
+      updateProgress();
     });
 
     select.addEventListener("keydown", (e) => {
@@ -262,7 +471,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // 🔁 Event: Dollar input changed
-    input.addEventListener("input", updateProgress);
+    input.addEventListener("input", () => {
+      clearAutoFillStatusOnManualEdit();
+      updateProgress();
+    });
 
     input.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
@@ -272,6 +484,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     input.addEventListener("blur", () => {
+      clearAutoFillStatusOnManualEdit();
       const val = parseFloat(input.value);
       if (!isNaN(val)) {
         budgetApp.expenseState.allocations[name] = val;
@@ -331,6 +544,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const takeHomePayInput = document.getElementById("takeHomePayInput");
+  const autoFillBtn = document.getElementById("autoFillBtn");
+  const autoFillHelpToggle = document.getElementById("autoFillHelpToggle");
+  const step2 = document.getElementById("step2");
   takeHomePayInput.classList.add("untouched");
 
   takeHomePayInput.addEventListener("focus", () => {
@@ -350,6 +566,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateExpensePlaceholders();
       }
       updateProgress();
+      syncAutoFillAvailability();
 
       // 👉 Show the reflection reminder
       const reminder = document.getElementById("valuesReminder");
@@ -363,10 +580,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Add event listener for the input field to update progress
   takeHomePayInput.addEventListener("input", () => {
+    clearAutoFillStatusOnManualEdit();
     const pay = parseFloat(takeHomePayInput.value);
     if (!isNaN(pay) && pay >= 0) {
       budgetApp.takeHomePay = pay;
       updateProgress();
+      syncAutoFillAvailability();
     }
   });
   takeHomePayInput.addEventListener("keydown", function (e) {
@@ -375,6 +594,46 @@ document.addEventListener("DOMContentLoaded", () => {
       this.blur(); // triggers the blur handler
     }
   });
+
+  if (autoFillBtn) {
+    autoFillBtn.addEventListener("click", applyAutoFill);
+  }
+
+  if (step2) {
+    step2.addEventListener("pointerdown", (e) => {
+      const continueBtn = document.getElementById("continueTo2_5");
+      if (!continueBtn || !continueBtn.disabled) return;
+
+      const rect = continueBtn.getBoundingClientRect();
+      const clickedWithinContinue =
+        e.clientX >= rect.left &&
+        e.clientX <= rect.right &&
+        e.clientY >= rect.top &&
+        e.clientY <= rect.bottom;
+
+      if (clickedWithinContinue) {
+        continueReasonRequested = true;
+        updateProgress();
+      }
+    });
+  }
+
+  if (autoFillHelpToggle) {
+    autoFillHelpToggle.addEventListener("click", () => {
+      const expanded =
+        autoFillHelpToggle.getAttribute("aria-expanded") === "true";
+      setAutoFillHelpVisibility(!expanded);
+    });
+
+    autoFillHelpToggle.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        const expanded =
+          autoFillHelpToggle.getAttribute("aria-expanded") === "true";
+        setAutoFillHelpVisibility(!expanded);
+      }
+    });
+  }
 
   const backTo1Btn = document.getElementById("backTo1");
   if (backTo1Btn) {
@@ -720,7 +979,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
           // Remove all category rows from both grid and summary
           document.getElementById("expenseGrid")?.replaceChildren();
-          document.getElementById("categoryTable")?.replaceChildren();
 
           // Validate the data
           if (!data.goals || !data.takeHomePay || !data.allocations) {
@@ -777,7 +1035,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 select.classList.add("filled");
               }
 
-              if (input && amount) {
+              if (input && amount !== undefined && amount !== null) {
                 input.classList.remove("untouched");
                 input.value = amount;
                 input.classList.add("filled");
@@ -787,6 +1045,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
           // Update all progress
           updateProgress(); // If commitment exists, prepare it
+          syncAutoFillAvailability();
+          setAutoFillStatus("");
           if (data.goalReflection) {
             safeSet("goalReflection", "value", data.goalReflection);
             budgetApp.goalReflection = data.goalReflection;
@@ -845,9 +1105,6 @@ document.addEventListener("DOMContentLoaded", () => {
       "_blank",
       "noopener,noreferrer",
     );
-  });
-  document.getElementById("printButton")?.addEventListener("click", () => {
-    window.print();
   });
 
   // End of the DOMContentLoaded event listener
